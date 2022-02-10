@@ -36,43 +36,68 @@ $$
 ### Script SQL per la definizione del DB
 
 ```sql
-CREATE TABLE Riferimento (
-	titolo: varchar(100) primary key,
-    autori: varchar(250),
-    data_pub: date,
-    descrizione: varchar(2000),
-    isbn: char(13) UNIQUE,
-    doi: varchar UNIQUE,
-    url: varchar(300) UNIQUE,
-    isnn: char(8) UNIQUE,
+
+-- La tabella `riferimento` tiene traccia dei riferimenti. Ogni riferimento può essere: di un libro (ISBN), di una risorsa online (URL), di un dataset (DOI) o di un articolo scientifico (ISSN).
+
+create table riferimento (
+    id_riferimento serial primary key,
+    titolo varchar(100),
+    autori varchar(250),
+    data_pub date,
+    descrizione varchar(2000),
+    isbn char(14) unique check (isbn ~* '^[0-9]{3}-[0-9]{10}$'),
+    doi varchar unique,
+    url varchar(300) unique,
+    issn char(8) unique check (issn ~*'^ISSN [0-9]{4}-[0-9]{4}$'),
+    -- Vincoli intrarelazionali
+    -- il vincolo `discriminante` ha il compito di distinguere un riferimento da un altro (uno stesso riferimento non può essere di un libro e di un sito web) 
+    constraint discriminante check( (isbn is not null and doi is null and url is null and issn is null) or (isbn is null and doi is not null and url is null and issn is null) or (isbn is null and doi is null and url is not null and issn is null) or (isbn is null and doi is null and url is null and issn is not null))
 )
 
-CREATE TABLE Citazione(
-	id: int primary key,
-    menzionato: varchar(100),
-    riferimento: varchar(100),
+-- La tabella `citazione` codifica la relazione * a * riflessiva. L'attributo `citazione.riferimento` indica il riferimento citante mentre `citazione.menzionato` indica il riferimento citato. 
+
+create table citazione(
+    id_citazione serial primary key,
+    menzionato varchar(100),
+    riferimento varchar(100),
+    -- Vincoli interrelazionali
     constraint riferito foreign key (menzionato) references Riferimento(titolo),
     constraint referente foreign key (riferimento) references Riferimento(titolo)
 )
 
-CREATE TABLE Categoria (
-	nome: varchar(100) primary key,
-    descrizione: varchar(2000)
+-- La tabella `categoria` contiene tutte le categorie create dall'utente
+
+create table categoria (
+    id_categoria serial primary key,
+    nome varchar(100),
+    descrizione varchar(2000)
 )
 
-CREATE TABLE Bibliografia (
-	id: int primary key,
-    riferimento: varchar(100),
-    categoria: varchar(100),
+-- La tabella `catalogo` codifica la relazione * a * tra `riferimento` e `categoria`. Consente di risalire alla categoria di ciascun riferimento, oppure di verificare quali riferimenti appartengono ad una data categoria.
+
+create table catalogo (
+    id_bibliografia serial primary key,
+    riferimento varchar(100),
+    categoria varchar(100),
+    -- Vincoli interrelazionali
     constraint riferimento foreign key (riferimento) references Riferimento(titolo),
     constraint categoria foreign key (categoria) references Categoria(nome)
 )
 
-CREATE TABLE Sottocategoria (
-	nome: varchar(100) primary key,
-    descrizione: varchar(1000),
-    supercategoria: varchar(100),
-    constraint categoria_padre foreign key (supercategoria) references Categoria(nome)
+-- La tabella `sottocategoria` indica le possibili sottocategorie di una supercategoria. Poiché potenzialmente una supercategoria potrebbe avere più di una sottocategoria, è inclusa una chiave esterna `supercategoria` che consente di risalire a tutte le sottocategorie di una supercategoria.
+
+create table sottocategoria (
+    id_sottocategoria serial primary key,
+    nome varchar(100),
+    descrizione varchar(1000),
+    supercategoria varchar(100),
+    -- Vincoli interrelazionali
+    constraint categoria_padre foreign key (supercategoria) references Categoria(id_categoria)
 )
 ```
 
+## Progettazione Software Java
+
+### Class Diagram
+
+![ClassDiagramJava](Pictures/class-diagram-java.png)

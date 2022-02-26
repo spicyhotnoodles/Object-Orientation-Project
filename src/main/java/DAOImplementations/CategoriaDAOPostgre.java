@@ -8,6 +8,7 @@ import java.sql.Connection;
 public class CategoriaDAOPostgre implements CategoriaDAO {
 
     private Connection connection;
+    //Qui vanno definiti gli Statement per le istruzioni SQL che i vari metodi devono eseguire
 
     public CategoriaDAOPostgre(Connection connection) {
         this.connection=connection;

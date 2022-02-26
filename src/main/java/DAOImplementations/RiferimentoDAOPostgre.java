@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class RiferimentoDAOPostgre implements RiferimentoDAO {
 
     private Connection connection;
+    //Qui vanno definiti gli Statement per le istruzioni SQL che i vari metodi devono eseguire
 
     public RiferimentoDAOPostgre(Connection connection) throws SQLException {
         this.connection=connection;

@@ -10,18 +10,24 @@ Di seguito verrà descritta la fase progettuale del database.
 Facendo riferimento alla traccia ho stilato il presente diagramma delle classi. Ho individuato 2 entità fondamentali:
 1. Riferimento: il rimando ad una data fonte che può essere:
 	1. Un libro.
-	2. Una risorsa in rete: sito web, blog, social network, ecc.
-	3. Un articolo scientifico su conferenza (ancora non ho idea di cosa sia) o su rivista.
-	4. Un dataset.
+	2. Un sito web.
+	3. Un atto di convegno.
+	4. Un articolo di rivista.
+	5. Un'intervista.
+	6. Una tesi.
+	7. Un articolo di giornale.
+	8. Una legge.
+	9. Un podcast.
+	10. Un film.
 2. Categoria: una suddivisione di riferimenti che può essere definita dall'utente.
 ### Ristrutturazione
 
-![ClassDiagramRistrutturato](Pictures/class-diagram-ristrutturato.png)
+![ClassDiagramRistrutturato](Pictures/class-diagram-2.png)
 
 Per la ristrutturazione del diagramma ho dovuto:
 
-1. Rimuovere le specializzazioni; ho preferito includere le classi specializzate nella generalizzazione. La motivazione di questa scelta è dovuta alla grande quantità di associazioni che andrebbero codificate se fossero mantenute separate le varie specializzazioni.
-2. Rimuovere gli attributi a valore multiplo; sono stati sostituiti con delle nuove classi. 
+1. Rimuovere le specializzazioni; ho preferito rendere le specializzazioni, delle classi indipendenti per evitare di includere troppi attributi nella singola classe `Riferimento`; ciò comporterebbe un gran spreco di memoria poiché non tutti gli attributi stanziati verrebbero assegnati (discriminante), avendo molti record con valori `NULL`.
+2. Gli attributi `Parola Chiave` e `Sottocategoria` sono anch'essi divenuti due classi per necessità di implementazione.
 
 ### Schema delle relazioni
 
@@ -39,20 +45,116 @@ $$
 
 -- La tabella `riferimento` tiene traccia dei riferimenti. Ogni riferimento può essere: di un libro (ISBN), di una risorsa online (URL), di un dataset (DOI) o di un articolo scientifico (ISSN).
 
+create type tipologia as enum (
+    'libro',
+    'art_rivista',
+    'art_convegno',
+    'art_giornale',
+    'tesi',
+    'web',
+    'film',
+    'intervista',
+    'legge',
+    'podcast'
+)
+
 create table riferimento (
     id_riferimento serial primary key,
-    titolo varchar(100),
-    autori varchar(250),
+    titolo varchar(200),
+    autori varchar(500),
     data_pub date,
-    descrizione varchar(2000),
-    isbn char(14) unique check (isbn ~* '^[0-9]{3}-[0-9]{10}$'),
-    doi varchar unique,
-    url varchar(300) unique,
-    issn char(8) unique check (issn ~*'^ISSN [0-9]{4}-[0-9]{4}$'),
+    descrizione varchar(1000),
+    lingua varchar(200),
+    note varchar(2000),
+    tipo tipologia
     -- Vincoli intrarelazionali
-    -- il vincolo `discriminante` ha il compito di distinguere un riferimento da un altro (uno stesso riferimento non può essere di un libro e di un sito web) 
-    constraint discriminante check( (isbn is not null and doi is null and url is null and issn is null) or (isbn is null and doi is not null and url is null and issn is null) or (isbn is null and doi is null and url is not null and issn is null) or (isbn is null and doi is null and url is null and issn is not null))
 )
+
+create table libro (
+	isbn char(14) primary key check (isbn ~* '^[0-9]{3}-[0-9]{10}$'),
+    titolo_libro varchar(200),
+    num_pagine varchar(50),
+    riferimento_id int,
+    serie varchar(200),
+    volume varchar(200),
+    constraint riferimento_libro foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table art_rivista (
+	issn char(9) primary key check (issn ~*'^ISSN [0-9]{4}-[0-9]{4}$'),
+    titolo_rivista varchar(200),
+    num_pagine varchar(50),
+    num_fascicolo varchar(50),
+    riferimento_id int,
+    constraint riferimento_rivista foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table art_convegno (
+	doi varchar(20) primary key,
+    titolo_convegno varchar(200),
+    luogo varchar(200),
+    isbn char(14) check (isbn ~* '^[0-9]{3}-[0-9]{10}$'),
+	riferimento_id int,
+    constraint riferimento_convegno foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table art_giornale (
+	issn char(9) primary key check (issn ~*'^ISSN [0-9]{4}-[0-9]{4}$'),
+    titolo_giornale varchar(200),
+    sezione varchar(200),
+    riferimento_id int,
+    constraint riferimento_giornale foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table tesi (
+	doi varchar(20) primary key,
+    tipo varchar(200),
+    ateneo varchar(200),
+    riferimento_id int,
+    constraint riferimento_tesi foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table web (
+	url primary key, 
+    sito varchar(200),
+    tipo varchar(200),
+    riferimento_id int,
+    constraint riferimento_web foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table film (
+	isan char(32) primary key,
+    genere varchar(200),
+    distribuzione varchar(200),
+    riferimento_id int,
+    constraint riferimento_film foreign key (riferimento_id) references Riferimento(riferimento_id)
+    
+)
+
+create table intervista (
+	doi varchar(20) primary key,
+    mezzo_diffusione varchar(200),
+    ospiti varchar(500),
+    riferimento_id int,
+    constraint riferimento_intervista foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table legge (
+	numero_legge varchar(50),
+    codice varchar(200),
+    -- contributori varchar(500),
+    riferimento_id int,
+    constraint riferimento_legge foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table podcast (
+	doi varchar(20) primary key,
+    numero_episodio varchar(200),
+    nome_serie varchar(200),
+    riferimento_id int,
+    constraint riferimento_podcast foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
 
 -- La tabella `citazione` codifica la relazione * a * riflessiva. L'attributo `citazione.riferimento` indica il riferimento citante mentre `citazione.menzionato` indica il riferimento citato. 
 
@@ -94,6 +196,7 @@ create table sottocategoria (
     -- Vincoli interrelazionali
     constraint categoria_padre foreign key (supercategoria) references Categoria(id_categoria)
 )
+
 ```
 
 ## Progettazione Software Java

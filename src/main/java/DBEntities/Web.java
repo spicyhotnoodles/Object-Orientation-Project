@@ -1,17 +1,12 @@
 package DBEntities;
 
-import DBEntities.Riferimento;
-import java.util.List;
-
 public class Web extends Riferimento {
     private String url;
     private String sito;
     private String tipoSito;
-    private List<String> autori;
 
     public Web(Builder builder) {
         super(builder);
-        this.autori = builder.autori;
         this.url = builder.url;
         this.sito = builder.sito;
         this.tipoSito = builder.tipoSito;
@@ -23,7 +18,6 @@ public class Web extends Riferimento {
         private String url;
         private String sito;
         private String tipoSito;
-        private List<String> autori;
 
         @Override
         public Builder getThis() {
@@ -31,11 +25,6 @@ public class Web extends Riferimento {
         }
 
         public Web build() { return new Web(this); }
-
-        public Builder autori(List<String> autori) {
-            this.autori = autori;
-            return this;
-        }
 
         public Builder url(String url) {
             this.url = url;
@@ -59,7 +48,6 @@ public class Web extends Riferimento {
                 "url='" + url + '\'' +
                 ", sito='" + sito + '\'' +
                 ", tipoSito='" + tipoSito + '\'' +
-                ", autori=" + autori +
                 '}';
     }
 
@@ -75,7 +63,4 @@ public class Web extends Riferimento {
         return tipoSito;
     }
 
-    public List<String> getAutori() {
-        return autori;
-    }
 }

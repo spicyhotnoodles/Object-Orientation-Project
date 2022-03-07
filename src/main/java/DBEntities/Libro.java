@@ -1,9 +1,6 @@
 package DBEntities;
 
-import java.util.List;
-
 public class Libro extends Riferimento {
-    private List<String> autori;
     private String pagine;
     private String isbn;
     private String serie;
@@ -11,7 +8,6 @@ public class Libro extends Riferimento {
 
     public Libro(Builder builder) {
         super(builder);
-        this.autori = builder.autori;
         this.pagine = builder.pagine;
         this.isbn = builder.isbn;
         this.serie = builder.serie;
@@ -23,7 +19,6 @@ public class Libro extends Riferimento {
     }
 
     public static class Builder extends Riferimento.Builder<Builder> {
-        private List<String> autori;
         private String pagine;
         private String isbn;
         private String serie;
@@ -36,11 +31,6 @@ public class Libro extends Riferimento {
 
         public Libro build() {
             return new Libro(this);
-        }
-
-        public Builder autori(List<String> autori) {
-            this.autori = autori;
-            return this;
         }
 
         public Builder pagine(String pagine) {
@@ -67,17 +57,12 @@ public class Libro extends Riferimento {
     @Override
     public String toString() {
         return "Libro{" +
-                super.toString() +
-                "autori=" + autori +
-                ", pagine='" + pagine + '\'' +
+                super.toString() + '\'' +
+                "pagine='" + pagine + '\'' +
                 ", isbn='" + isbn + '\'' +
                 ", serie='" + serie + '\'' +
                 ", volume='" + volume + '\'' +
                 '}';
-    }
-
-    public List<String> getAutori() {
-        return autori;
     }
 
     public String getPagine() {
@@ -95,4 +80,5 @@ public class Libro extends Riferimento {
     public String getVolume() {
         return volume;
     }
+
 }

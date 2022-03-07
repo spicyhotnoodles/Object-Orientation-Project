@@ -7,6 +7,7 @@ import DBEntities.Riferimento;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class RiferimentoDAOPostgre implements RiferimentoDAO {
 
@@ -14,26 +15,43 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
     //Qui vanno definiti gli Statement per le istruzioni SQL che i vari metodi devono eseguire
 
     public RiferimentoDAOPostgre(Connection connection) throws SQLException {
-        this.connection=connection;
+        this.connection = connection;
     }
 
     @Override
-    public ArrayList<Riferimento> ottieniRiferimentoPerParoleChiave(ArrayList<String> tags) {
-        return null;
+    public void inserisciRiferimento(Riferimento riferimento) {
     }
 
     @Override
-    public int inserisciNuovoRiferimento(Riferimento riferimento) {
-        return 0;
+    public void modificaRiferimento(Riferimento riferimento) {
     }
 
     @Override
-    public int modificaRiferimento(Riferimento riferimento) {
-        return 0;
+    public ArrayList<Riferimento> ottieniRiferimenti() {
+        ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
+
+        return riferimenti;
     }
 
-    @Override
-    public ArrayList<Riferimento> ottieniRiferimentiPerCategoria(Categoria categoria) {
-        return null;
+    public ArrayList<String> estraiAutori(String str) {
+        Stack<Integer> dels = new Stack<Integer>();
+        ArrayList<String> autori = new ArrayList<String>();
+        for(int i = 0; i < str.length(); i++)
+        {
+            if (str.charAt(i) == '[')
+                dels.add(i);
+            else if (str.charAt(i) == ']' &&
+                    !dels.isEmpty())
+            {
+                int pos = dels.peek();
+                dels.pop();
+                int len = i - 1 - pos;
+                String ans = str.substring(
+                        pos + 1, pos + 1 + len);
+                autori.add(ans);
+            }
+        }
+        return autori;
     }
+
 }

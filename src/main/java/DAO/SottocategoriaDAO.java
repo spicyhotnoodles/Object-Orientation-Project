@@ -4,5 +4,6 @@ import DBEntities.Categoria;
 
 public interface SottocategoriaDAO {
 
-    int definisciSupercategoria(Categoria categoria);
+    String creaSottocategoria(Categoria sottocategoria, Categoria supercategoria);
+    //int definisciSupercategoria(Categoria categoria);
 }

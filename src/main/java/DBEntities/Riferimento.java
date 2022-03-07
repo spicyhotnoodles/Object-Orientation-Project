@@ -1,26 +1,29 @@
 package DBEntities;
 
-import java.util.Date;
+import java.util.List;
 
 public class Riferimento {
 
+    private String codice;
     private String titolo;
+    private List<String> autori;
     private String descrizione;
     private String data;
     private String lingua;
     private String tipo;
     private String note;
+    private List<Categoria> categorie;
 
     protected Riferimento(Builder<?> builder) {
+        codice = builder.codice;
         titolo = builder.titolo;
+        autori = builder.autori;
         descrizione = builder.descrizione;
         data = builder.data;
         lingua = builder.lingua;
         tipo = builder.tipo;
         note = builder.note;
-    }
-
-    public Riferimento() {
+        categorie = builder.categorie;
     }
 
     /*public static Builder builder() {
@@ -33,17 +36,25 @@ public class Riferimento {
     }*/
 
     abstract static class Builder<T extends Builder<T>> {
+        private String codice;
         private String titolo;
+        private List<String> autori;
         private String descrizione;
         private String data;
         private String lingua;
         private String tipo;
         private String note;
+        private List<Categoria> categorie;
 
         public abstract T getThis();
 
         public T titolo(String titolo) {
             this.titolo = titolo;
+            return this.getThis();
+        }
+
+        public T autori(List<String> autori) {
+            this.autori = autori;
             return this.getThis();
         }
 
@@ -72,6 +83,16 @@ public class Riferimento {
             return this.getThis();
         }
 
+        public T categorie(List<Categoria> categorie) {
+            this.categorie = categorie;
+            return this.getThis();
+        }
+
+        public T codice(String codice) {
+            this.codice = codice;
+            return this.getThis();
+        }
+
         public Riferimento build() {
             return new Riferimento(this);
         }
@@ -80,21 +101,24 @@ public class Riferimento {
 
     @Override
     public String toString() {
-        return "titolo='" + titolo + '\'' +
+        return "codice='" + codice +
+                ", titolo='" + titolo + '\'' +
+                ", autori=" + autori +
                 ", descrizione='" + descrizione + '\'' +
                 ", data='" + data + '\'' +
                 ", lingua='" + lingua + '\'' +
                 ", tipo='" + tipo + '\'' +
-                ", note='" + note + '\'';
+                ", note='" + note + '\'' +
+                ", categorie=" + categorie + '\'';
     }
 
     public String getTitolo() {
         return titolo;
     }
 
-    public String getDescrizione() {
-        return descrizione;
-    }
+    public List<String> getAutori() { return autori; }
+
+    public String getDescrizione() { return descrizione; }
 
     public String getData() {
         return data;
@@ -110,5 +134,45 @@ public class Riferimento {
 
     public String getNote() {
         return note;
+    }
+
+    public List<Categoria> getCategorie() { return categorie; }
+
+    public String getCodice() { return codice; }
+
+    public void setCodice(String codice) {
+        this.codice = codice;
+    }
+
+    public void setTitolo(String titolo) {
+        this.titolo = titolo;
+    }
+
+    public void setAutori(List<String> autori) {
+        this.autori = autori;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void setLingua(String lingua) {
+        this.lingua = lingua;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public void setCategorie(List<Categoria> categorie) {
+        this.categorie = categorie;
     }
 }

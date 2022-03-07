@@ -5,6 +5,7 @@ import java.net.ConnectException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 /*
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -44,27 +45,34 @@ public class Controller {
     public static void main(String[] args) throws SQLException, IOException {
         Controller c = new Controller();
         c.startConnection();
-        //c.libroDAO.inserisciLibro(l);
-        /*if (c.libroDAO.inserisciLibro(l))
-            System.out.println("Libro inserito con successo!");
-        else
-            System.out.println("Errore!");*/
-        /*List<String> autori = new ArrayList<String>();
+        Categoria cat = new Categoria("Fantasy");
+        String codCategoria = c.categoriaDAO.creaCategoria(cat);
+        cat.setCodice(codCategoria);
+        List<Categoria> categorie = new ArrayList<Categoria>();
+        categorie.add(cat);
+        List<String> autori = new ArrayList<String>();
         autori.add("J.R.R. Tolkien");
         Libro l = Libro.builder()
                 .titolo("Il Signore degli Anelli")
+                .autori(autori)
                 .descrizione("Il miglior fantasy di sempre.")
                 .data("1955")
                 .lingua("Inglese")
-                .tipo("Libro")
+                .tipo("libro")
                 .note("...")
-                .autori(autori)
+                .categorie(categorie)
                 .pagine("1395")
-                .isbn("86824972019012")
+                .isbn("978-8830105263")
                 .serie("Il Signore degli Anelli")
                 .volume("La Compagnia dell'Anello")
                 .build();
-        System.out.println(l.toString());*/
+        String codice = c.libroDAO.inserisciLibro(l);
+        l.setCodice(codice);
+        System.out.println(l.toString());
+        categorie.remove(0);
+        l.setTitolo("Il Signore degli Anelli - La compagnia dell'anello");
+        l.setCategorie(categorie);
+        c.libroDAO.modificaLibro(l);
     }
 
     //startConnection() crea una connessione al database

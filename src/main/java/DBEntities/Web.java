@@ -14,7 +14,7 @@ public class Web extends Riferimento {
 
     public static Builder builder() { return new Builder(); }
 
-    public static class Builder extends  Riferimento.Builder<Builder> {
+    public static class Builder extends Riferimento.Builder<Builder> {
         private String url;
         private String sito;
         private String tipoSito;

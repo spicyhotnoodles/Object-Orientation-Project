@@ -62,7 +62,7 @@ create table riferimento (
     id_riferimento serial primary key,
     titolo varchar(200),
     autori varchar(500),
-    data_pub date,
+    data_pub varchar(15),
     descrizione varchar(1000),
     lingua varchar(200),
     note varchar(2000),
@@ -72,35 +72,31 @@ create table riferimento (
 
 create table libro (
 	isbn char(14) primary key check (isbn ~* '^[0-9]{3}-[0-9]{10}$'),
-    titolo_libro varchar(200),
-    num_pagine varchar(50),
-    riferimento_id int,
+    pagine varchar(50),
     serie varchar(200),
     volume varchar(200),
+    riferimento_id int,
     constraint riferimento_libro foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
 
-create table art_rivista (
+create table rivista (
 	issn char(9) primary key check (issn ~*'^ISSN [0-9]{4}-[0-9]{4}$'),
-    titolo_rivista varchar(200),
-    num_pagine varchar(50),
-    num_fascicolo varchar(50),
+    pagine varchar(50),
+    fascicolo varchar(50),
     riferimento_id int,
     constraint riferimento_rivista foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
 
-create table art_convegno (
+create table convegno (
 	doi varchar(20) primary key,
-    titolo_convegno varchar(200),
     luogo varchar(200),
-    isbn char(14) check (isbn ~* '^[0-9]{3}-[0-9]{10}$'),
 	riferimento_id int,
     constraint riferimento_convegno foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
 
-create table art_giornale (
+create table giornale (
 	issn char(9) primary key check (issn ~*'^ISSN [0-9]{4}-[0-9]{4}$'),
-    titolo_giornale varchar(200),
+    testata varchar(50),
     sezione varchar(200),
     riferimento_id int,
     constraint riferimento_giornale foreign key (riferimento_id) references Riferimento(riferimento_id)
@@ -115,9 +111,9 @@ create table tesi (
 )
 
 create table web (
-	url primary key, 
+	url varchar(200) primary key, 
     sito varchar(200),
-    tipo varchar(200),
+    tipo_sito varchar(200),
     riferimento_id int,
     constraint riferimento_web foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
@@ -133,57 +129,62 @@ create table film (
 
 create table intervista (
 	doi varchar(20) primary key,
-    mezzo_diffusione varchar(200),
+    mezzo varchar(200),
     ospiti varchar(500),
     riferimento_id int,
     constraint riferimento_intervista foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
 
 create table legge (
-	numero_legge varchar(50),
+	numero varchar(25) primary key,
+    tipo_legge varchar(30),
     codice varchar(200),
-    -- contributori varchar(500),
     riferimento_id int,
     constraint riferimento_legge foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
 
 create table podcast (
 	doi varchar(20) primary key,
-    numero_episodio varchar(200),
-    nome_serie varchar(200),
+    episodio varchar(200),
+    serie varchar(200),
     riferimento_id int,
     constraint riferimento_podcast foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
 
-
 -- La tabella `citazione` codifica la relazione * a * riflessiva. L'attributo `citazione.riferimento` indica il riferimento citante mentre `citazione.menzionato` indica il riferimento citato. 
 
-create table citazione(
+create table citazione (
     id_citazione serial primary key,
-    menzionato varchar(100),
-    riferimento varchar(100),
-    -- Vincoli interrelazionali
-    constraint riferito foreign key (menzionato) references Riferimento(titolo),
-    constraint referente foreign key (riferimento) references Riferimento(titolo)
+    menzionato_id int,
+    riferimento_id int,
+    constraint riferito foreign key (menzionato_id) references Riferimento(riferimento_id),
+    constraint referente foreign key (riferimento_id) references Riferimento(riferimento_id)
+)
+
+create table tag (
+	id_tag serial primary key,
+    parola varchar(15) unique,
+    riferiemnto_id int,
+    constraint riferimento_tags foreign key (riferimento_id) references Riferimento(id_riferimento)
 )
 
 -- La tabella `categoria` contiene tutte le categorie create dall'utente
 
 create table categoria (
     id_categoria serial primary key,
-    nome varchar(100),
+    nome varchar(100) unique,
     descrizione varchar(2000)
 )
 
 -- La tabella `catalogo` codifica la relazione * a * tra `riferimento` e `categoria`. Consente di risalire alla categoria di ciascun riferimento, oppure di verificare quali riferimenti appartengono ad una data categoria.
 
 create table catalogo (
-    id_bibliografia serial primary key,
-    riferimento varchar(100),
-    categoria varchar(100),
+    catalogo_id serial primary key,
+    riferimento_id int,
+    categoria_id int,
     -- Vincoli interrelazionali
-    constraint riferimento foreign key (riferimento) references Riferimento(titolo),
-    constraint categoria foreign key (categoria) references Categoria(nome)
+    constraint riferimento foreign key (riferimento_id) references Riferimento(riferimento_id),
+    constraint categoria foreign key (categoria_id) references Categoria(categoria_id)
 )
 
 -- La tabella `sottocategoria` indica le possibili sottocategorie di una supercategoria. Poiché potenzialmente una supercategoria potrebbe avere più di una sottocategoria, è inclusa una chiave esterna `supercategoria` che consente di risalire a tutte le sottocategorie di una supercategoria.

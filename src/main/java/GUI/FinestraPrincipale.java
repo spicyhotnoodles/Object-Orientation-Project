@@ -21,132 +21,136 @@ public class FinestraPrincipale extends JFrame {
 
     private Controller theController; //controllore
     private JPanel mainPanel; //pannello principale che contiene tutto il frame
-        private JPanel leftPanel; //pannello di sinistra che contiene l'albero delle categorie e la lista delle parole chiave
-            //elementi del pannello di sinsitra:
-            private JScrollPane tagScrollPane; //JScrollPane che contiene la lista delle parole chiave
-                //elementi del pannello tag:
-                private JList tagList; //lista delle parole chiave definite dall'utente
-                private JLabel tagLabel; //JLabel "Parole chiave"
-                private JTree categoriaTree; //albero che lista tutte le categorie definite dall'utente
-                private JButton creaCategoriaButton;
-                private JButton eliminaCategoriaButton;
-                private JTextField cercaCategoriaTextField;
-                private JButton cercaCategoriaButton;
-            private JPanel centerPanel; //pannello centrale che contiene la tabella dei riferimenti presenti nel sistema
-                //elementi del pannello centrale:
-                private JScrollPane tabellaScrollPane;
-                private JTable refTable; //tabella dei riferimenti
-                private JButton aggiungiRiferimentoButton;
-                private JButton eliminaRiferimentoButton;
-                private JTextField cercaRiferimentoTextField;
-                private JButton cercaRiferimentoButton;
-            private JPanel rightPanel; //pannello di destra che contiene il pannello tab
-                //elementi del pannello di destra:
-                private JTabbedPane tabbedPane; //pannello tab con cui è possibile visualizzare/modificare/aggiungere informazioni ai riferimenti
-                    //elementi del pannello tab:
-                    private JPanel infoPanel;
-                        //elementi del pannello delle info:
-                        private JTextField titoloRiferimentoTextField;
-                        private JLabel titoloRiferimentoLabel;
-                        private JLabel autoreLabel;
-                        private JComboBox tipoRiferimentoComboBox;
-                        private JTextField dataTextField;
-                        private JTextField linguaTextField;
-                        private JTextField urlTextField;
-                        private JTextField isbnTextField;
-                        private JTextField doiTextField;
-                        private JLabel isbnLabel;
-                        private JLabel doiLabel;
-                        private JButton rimuoviAutoreButton;
-                        private JButton addAuthorButton;
-                        private JScrollPane descrizioneRiferimentoScrollPane;
-                        private JList autoreList;
-                        private JLabel urlLabel;
-                        private JLabel dataLabel;
-                        private JLabel linguaLabel;
-                        private JLabel tipoRiferimentoLabel;
-                        private JTextArea descrizioneRiferimentoTextArea;
-                        private JLabel descrizioneRiferimentoLabel;
-                        private JButton salvaRiferimentoButton;
-                        private JTextField serieLibroTextField;
-                        private JTextField numeroPagineTextField;
-                        private JTextField volumeTextField;
-                        private JTextField nomeSitoWebTextField;
-                        private JTextField tipoSitoWebTextField;
-                        private JTextField issnTextField;
-                        private JTextField numeroFascicoloTextField;
-                        private JTextField sezioneTextField;
-                        private JTextField luogoConvegnoTextField;
-                        private JTextField tipoTesiTextField;
-                        private JTextField nomeUniversitàTextField;
-                        private JTextField cercaTagTextField;
-                        private JButton cercaTagButton;
-                        private JTextField lawLenderTextField;
-                        private JTextField numeroLeggeTextField;
-                        private JTextField lawVolumeCodeTextField;
-                        private JTextField legislativeBodyTextField;
-                        private JTextField podcastTitleTextField;
-                        private JTextField numeroEpisodioPodcastTextField;
-                        private JList registaList;
-                        private JButton rimuoviRegistaButton;
-                        private JButton aggiungiRegistaButton;
-                        private JList ospitiIntervistaList;
-                        private JButton aggiungiOspiteButton;
-                        private JButton rimuoviOspiteButton;
-                        private JScrollPane categoryScrollPane;
-                        private JLabel serieLibroLabel;
-                        private JLabel numeroPagineLabel;
-                        private JLabel volumeLabel;
-                        private JLabel tipoSitoWebLabel;
-                        private JLabel nomeSitoWebLabel;
-                        private JLabel issnLabel;
-                        private JLabel numeroFascicoloLabel;
-                        private JLabel luogoConvegnoLabel;
-                        private JLabel sezioneLabel;
-                        private JLabel tipoTesiLabel;
-                        private JLabel nomeUniversitàLabel;
-                        private JLabel contributoreLeggeLabel;
-                        private JLabel numeroLeggeLabel;
-                        private JLabel codiceLeggeLabel;
-                        private JTextField codiceLeggeTextField;
-                        private JLabel lawVolumeCodeLabel;
-                        private JLabel legislativeBodyLabel;
-                        private JLabel podcastTitleLabel;
-                        private JLabel numeroEpisodioPodcastLabel;
-                        private JLabel registaLabel;
-                        private JLabel ospitiIntervistaLabel;
-                        private JTextField distribuzioneFilmTextField;
-                        private JTextField genereFilmTextField;
-                        private JTextField movieLengthTextField;
-                        private JLabel distribuzioneFilmLabel;
-                        private JLabel genereFilmLabel;
-                        private JLabel movieLengthLabel;
-                        private JList contributoreLeggeList;
-                        private JButton aggiungiContributoreLeggeButton;
-                        private JButton rimuoviContributoreLeggeButton;
-                    private JPanel notePanel;
-                        //elementi del pannello delle note
-                        private JTextArea notesTextArea;
-                        private JButton saveNotesButton;
-                        private JButton clearNotesButton;
-                    private JPanel collegamentiPanel;
-                        //elementi del pannello dei collegamenti
-                        private JLabel refLinkLabel;
-                        private JButton addRefLinkButton;
-                        private JList refLinkList;
-                        private JButton deleteRefLinkButton;
-                        private JButton changeRefLinkButton;
-                    private JPanel tagPanel;
-                        private JTextField addTagTextField;
-                        private JButton addTagButton;
-                        private JList addTagList;
-                        private JButton deleteTagButton;
-                        private JButton changeTagButton;
-                        private JLabel addTagLabel;
+    private JPanel leftPanel; //pannello di sinistra che contiene l'albero delle categorie e la lista delle parole chiave
+    //elementi del pannello di sinsitra:
+    private JScrollPane tagScrollPane; //JScrollPane che contiene la lista delle parole chiave
+    //elementi del pannello tag:
+    private JList tagList; //lista delle parole chiave definite dall'utente
+    private JLabel tagLabel; //JLabel "Parole chiave"
+    private JTree categoriaTree; //albero che lista tutte le categorie definite dall'utente
+    private JButton creaCategoriaButton;
+    private JButton eliminaCategoriaButton;
+    private JTextField cercaCategoriaTextField;
+    private JButton cercaCategoriaButton;
+    private JPanel centerPanel; //pannello centrale che contiene la tabella dei riferimenti presenti nel sistema
+    //elementi del pannello centrale:
+    private JScrollPane tabellaScrollPane;
+    private JTable riferimentiTable; //tabella dei riferimenti
+    private JButton aggiungiRiferimentoButton;
+    private JButton eliminaRiferimentoButton;
+    private JTextField cercaRiferimentoTextField;
+    private JButton cercaRiferimentoButton;
+    private JPanel rightPanel; //pannello di destra che contiene il pannello tab
+    //elementi del pannello di destra:
+    private JTabbedPane tabbedPane; //pannello tab con cui è possibile visualizzare/modificare/aggiungere informazioni ai riferimenti
+    //elementi del pannello tab:
+    private JPanel infoPanel;
+    //elementi del pannello delle info:
+    private JTextField titoloRiferimentoTextField;
+    private JLabel titoloRiferimentoLabel;
+    private JLabel autoreLabel;
+    private JComboBox tipoRiferimentoComboBox;
+    private JTextField dataTextField;
+    private JTextField linguaTextField;
+    private JTextField urlTextField;
+    private JTextField isbnTextField;
+    private JTextField doiTextField;
+    private JLabel isbnLabel;
+    private JLabel doiLabel;
+    private JButton rimuoviAutoreButton;
+    private JButton aggiungiAutoreButton;
+    private JScrollPane descrizioneRiferimentoScrollPane;
+    private JList autoreList;
+    private JLabel urlLabel;
+    private JLabel dataLabel;
+    private JLabel linguaLabel;
+    private JLabel tipoRiferimentoLabel;
+    private JTextArea descrizioneRiferimentoTextArea;
+    private JLabel descrizioneRiferimentoLabel;
+    private JButton salvaRiferimentoButton;
+    private JTextField serieTextField;
+    private JTextField numeroPagineTextField;
+    private JTextField volumeTextField;
+    private JTextField nomeSitoWebTextField;
+    private JTextField tipoSitoWebTextField;
+    private JTextField issnTextField;
+    private JTextField numeroFascicoloTextField;
+    private JTextField sezioneTextField;
+    private JTextField luogoConvegnoTextField;
+    private JTextField tipoTesiTextField;
+    private JTextField nomeUniversitàTextField;
+    private JTextField cercaTagTextField;
+    private JButton cercaTagButton;
+    private JTextField lawLenderTextField;
+    private JTextField numeroLeggeTextField;
+    private JTextField lawVolumeCodeTextField;
+    private JTextField legislativeBodyTextField;
+    private JTextField podcastTitleTextField;
+    private JTextField numeroEpisodioPodcastTextField;
+    private JList registaList;
+    private JButton rimuoviRegistaButton;
+    private JButton aggiungiRegistaButton;
+    private JList ospitiIntervistaList;
+    private JButton aggiungiOspiteButton;
+    private JButton rimuoviOspiteButton;
+    private JScrollPane categoryScrollPane;
+    private JLabel serieLabel;
+    private JLabel numeroPagineLabel;
+    private JLabel volumeLabel;
+    private JLabel tipoSitoWebLabel;
+    private JLabel nomeSitoWebLabel;
+    private JLabel issnLabel;
+    private JLabel numeroFascicoloLabel;
+    private JLabel luogoConvegnoLabel;
+    private JLabel sezioneLabel;
+    private JLabel tipoTesiLabel;
+    private JLabel nomeUniversitàLabel;
+    private JLabel contributoreLeggeLabel;
+    private JLabel numeroLeggeLabel;
+    private JLabel codiceLeggeLabel;
+    private JTextField codiceLeggeTextField;
+    private JLabel lawVolumeCodeLabel;
+    private JLabel legislativeBodyLabel;
+    private JLabel podcastTitleLabel;
+    private JLabel numeroEpisodioPodcastLabel;
+    private JLabel registaLabel;
+    private JLabel ospitiIntervistaLabel;
+    private JTextField distribuzioneFilmTextField;
+    private JTextField genereFilmTextField;
+    private JTextField movieLengthTextField;
+    private JLabel distribuzioneFilmLabel;
+    private JLabel genereFilmLabel;
+    private JLabel movieLengthLabel;
+    private JList contributoreLeggeList;
+    private JButton aggiungiContributoreLeggeButton;
+    private JButton rimuoviContributoreLeggeButton;
+    private JPanel notePanel;
+    //elementi del pannello delle note
+    private JTextArea notesTextArea;
+    private JButton saveNotesButton;
+    private JButton clearNotesButton;
+    private JPanel collegamentiPanel;
+    //elementi del pannello dei collegamenti
+    private JLabel refLinkLabel;
+    private JButton addRefLinkButton;
+    private JList refLinkList;
+    private JButton deleteRefLinkButton;
+    private JButton changeRefLinkButton;
+    private JPanel tagPanel;
+    private JTextField addTagTextField;
+    private JButton addTagButton;
+    private JList addTagList;
+    private JButton deleteTagButton;
+    private JButton changeTagButton;
+    private JLabel addTagLabel;
     private JTextField mezzoDistribuzioneIntervistaTextField;
     private JLabel mezzoDistribuzioneIntervistaLabel;
     private JTextField isanTextField;
     private JLabel isanLabel;
+    private JTextField testataGiornaletextField;
+    private JLabel testataGiornaleLabel;
+    private JLabel tipoLeggeLabel;
+    private JComboBox tipoLeggeComboBox;
 
 
     //Lista icone per i pulsanti:
@@ -170,7 +174,7 @@ public class FinestraPrincipale extends JFrame {
         this.setContentPane(mainPanel);
         this.pack();
         this.setBounds(650, 250, 700, 500);
-        createRefTable();
+        creaTabellaRiferimenti();
         folderIcon = FontIcon.of(MaterialDesign.MDI_FOLDER);
         canIcon = FontIcon.of(MaterialDesign.MDI_DELETE);
         searchIcon = FontIcon.of(MaterialDesign.MDI_MAGNIFY);
@@ -190,7 +194,7 @@ public class FinestraPrincipale extends JFrame {
         aggiungiRiferimentoButton.setIcon(addIcon);
         eliminaRiferimentoButton.setIcon(deleteIcon);
         cercaRiferimentoButton.setIcon(searchIcon);
-        addAuthorButton.setIcon(addAuthorIcon);
+        aggiungiAutoreButton.setIcon(addAuthorIcon);
         rimuoviAutoreButton.setIcon(removeAuthorIcon);
         aggiungiRegistaButton.setIcon(addAuthorIcon);
         rimuoviRegistaButton.setIcon(removeAuthorIcon);
@@ -204,8 +208,8 @@ public class FinestraPrincipale extends JFrame {
         contributoreLeggeList.setBorder(new LineBorder(Color.GRAY));
         //oscura tutti gli attributi
         nascondiAttributiDiscriminanti();
-                                            //riferimenti = theController.ottieniRiferimenti();
-                                            //riempiTabella(riferimenti);
+        riferimenti = theController.ottieniRiferimenti();
+        riempiTabella(riferimenti);
         //action listners:
         /*for (Riferimento i: riferimenti)
             System.out.println(i);
@@ -231,8 +235,7 @@ public class FinestraPrincipale extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Libro")) {
                     nascondiAttributiDiscriminanti();
-
-                    addAuthorButton.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
                     rimuoviAutoreButton.setVisible(true);
                     autoreList.setVisible(true);
                     autoreLabel.setVisible(true);
@@ -243,25 +246,25 @@ public class FinestraPrincipale extends JFrame {
                     volumeTextField.setVisible(true);
                     numeroPagineLabel.setVisible(true);
                     numeroPagineTextField.setVisible(true);
-                    serieLibroLabel.setVisible(true);
-                    serieLibroTextField.setVisible(true);
+                    serieLabel.setVisible(true);
+                    serieTextField.setVisible(true);
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Atto di convegno")) {
                     nascondiAttributiDiscriminanti();
                     autoreList.setVisible(true);
                     autoreLabel.setVisible(true);
-                    addAuthorButton.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
                     rimuoviAutoreButton.setVisible(true);
                     doiLabel.setVisible(true);
                     doiTextField.setVisible(true);
                     luogoConvegnoLabel.setVisible(true);
                     luogoConvegnoTextField.setVisible(true);
-                    isbnLabel.setVisible(true);
-                    isbnTextField.setVisible(true);
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Articolo di rivista")) {
                     nascondiAttributiDiscriminanti();
+                    issnLabel.setVisible(true);
+                    issnTextField.setVisible(true);
                     autoreLabel.setVisible(true);
                     autoreList.setVisible(true);
-                    addAuthorButton.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
                     rimuoviAutoreButton.setVisible(true);
                     numeroPagineLabel.setVisible(true);
                     numeroPagineTextField.setVisible(true);
@@ -269,12 +272,16 @@ public class FinestraPrincipale extends JFrame {
                     numeroFascicoloTextField.setVisible(true);
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Articolo di giornale")) {
                     nascondiAttributiDiscriminanti();
+                    issnLabel.setVisible(true);
+                    issnTextField.setVisible(true);
                     autoreLabel.setVisible(true);
                     autoreList.setVisible(true);
-                    addAuthorButton.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
                     rimuoviAutoreButton.setVisible(true);
                     sezioneLabel.setVisible(true);
                     sezioneTextField.setVisible(true);
+                    testataGiornaleLabel.setVisible(true);
+                    testataGiornaletextField.setVisible(true);
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Legge")) {
                     nascondiAttributiDiscriminanti();
                     codiceLeggeLabel.setVisible(true);
@@ -285,11 +292,13 @@ public class FinestraPrincipale extends JFrame {
                     contributoreLeggeList.setVisible(true);
                     aggiungiContributoreLeggeButton.setVisible(true);
                     rimuoviContributoreLeggeButton.setVisible(true);
+                    tipoLeggeComboBox.setVisible(true);
+                    tipoLeggeLabel.setVisible(true);
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Tesi")) {
                     nascondiAttributiDiscriminanti();
                     autoreList.setVisible(true);
                     autoreLabel.setVisible(true);
-                    addAuthorButton.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
                     rimuoviAutoreButton.setVisible(true);
                     doiLabel.setVisible(true);
                     doiTextField.setVisible(true);
@@ -301,34 +310,39 @@ public class FinestraPrincipale extends JFrame {
                     nascondiAttributiDiscriminanti();
                     autoreLabel.setVisible(true);
                     autoreList.setVisible(true);
-                    addAuthorButton.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
                     rimuoviAutoreButton.setVisible(true);
                     nomeSitoWebLabel.setVisible(true);
                     nomeSitoWebTextField.setVisible(true);
                     tipoSitoWebLabel.setVisible(true);
                     tipoSitoWebTextField.setVisible(true);
-                }
-                else if (tipoRiferimentoComboBox.getSelectedItem().equals("Intervista")) {
+                } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Intervista")) {
                     nascondiAttributiDiscriminanti();
+                    autoreLabel.setVisible(true);
+                    autoreList.setVisible(true);
+                    doiLabel.setVisible(true);
+                    doiTextField.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
+                    rimuoviAutoreButton.setVisible(true);
                     ospitiIntervistaLabel.setVisible(true);
                     ospitiIntervistaList.setVisible(true);
                     aggiungiOspiteButton.setVisible(true);
                     rimuoviOspiteButton.setVisible(true);
                     mezzoDistribuzioneIntervistaLabel.setVisible(true);
                     mezzoDistribuzioneIntervistaTextField.setVisible(true);
-                }
-                else if (tipoRiferimentoComboBox.getSelectedItem().equals("Podcast")) {
+                } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Podcast")) {
                     nascondiAttributiDiscriminanti();
                     autoreLabel.setVisible(true);
                     autoreList.setVisible(true);
-                    addAuthorButton.setVisible(true);
+                    serieLabel.setVisible(true);
+                    serieTextField.setVisible(true);
+                    aggiungiAutoreButton.setVisible(true);
                     rimuoviAutoreButton.setVisible(true);
                     doiLabel.setVisible(true);
                     doiTextField.setVisible(true);
                     numeroEpisodioPodcastLabel.setVisible(true);
                     numeroEpisodioPodcastTextField.setVisible(true);
-                }
-                else if (tipoRiferimentoComboBox.getSelectedItem().equals("Film")) {
+                } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Film")) {
                     nascondiAttributiDiscriminanti();
                     isanLabel.setVisible(true);
                     isanTextField.setVisible(true);
@@ -364,15 +378,15 @@ public class FinestraPrincipale extends JFrame {
                 i++;
             }
         });*/
-        refTable.addMouseListener(new MouseAdapter() {
+        riferimentiTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 //riferimenti.get(0).toString();
                 //Riferimento r = riferimenti.get(refTable.getModel().getValueAt(refTable.getSelectedRow()));
-                System.out.println(riferimenti.get(refTable.getSelectedRow()));
-                if (riferimenti.get(refTable.getSelectedRow()) instanceof Libro) {
-                    Libro l = (Libro) riferimenti.get(refTable.getSelectedRow());
+                System.out.println(riferimenti.get(riferimentiTable.getSelectedRow()));
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Libro) {
+                    Libro l = (Libro) riferimenti.get(riferimentiTable.getSelectedRow());
                     l.toString();
                     //titoloRiferimentoLabel.setText("LIBROOOOOO");
                 }
@@ -381,15 +395,15 @@ public class FinestraPrincipale extends JFrame {
         });
     }
 
-    private void createRefTable() {
-        refTable.setModel(new DefaultTableModel(null, new String[]{"Titolo", "Tipologia", "Anno", "Lingua"}));
+    private void creaTabellaRiferimenti() {
+        riferimentiTable.setModel(new DefaultTableModel(null, new String[]{"Titolo", "Tipologia", "Anno", "Lingua"}));
     }
 
     private void nascondiAttributiDiscriminanti() {
         //tipo libro
         autoreList.setVisible(false);
         autoreLabel.setVisible(false);
-        addAuthorButton.setVisible(false);
+        aggiungiAutoreButton.setVisible(false);
         rimuoviAutoreButton.setVisible(false);
         isbnLabel.setVisible(false);
         isbnTextField.setVisible(false);
@@ -397,13 +411,15 @@ public class FinestraPrincipale extends JFrame {
         volumeTextField.setVisible(false);
         numeroPagineLabel.setVisible(false);
         numeroPagineTextField.setVisible(false);
-        serieLibroLabel.setVisible(false);
-        serieLibroTextField.setVisible(false);
+        serieLabel.setVisible(false);
+        serieTextField.setVisible(false);
         //tipo articolo di giornale
         sezioneLabel.setVisible(false);
         sezioneTextField.setVisible(false);
         issnLabel.setVisible(false);
         issnTextField.setVisible(false);
+        testataGiornaleLabel.setVisible(false);
+        testataGiornaletextField.setVisible(false);
         //tipo articolo di rivista
         numeroFascicoloLabel.setVisible(false);
         numeroFascicoloTextField.setVisible(false);
@@ -432,6 +448,8 @@ public class FinestraPrincipale extends JFrame {
         rimuoviContributoreLeggeButton.setVisible(false);
         numeroLeggeLabel.setVisible(false);
         numeroLeggeTextField.setVisible(false);
+        tipoLeggeComboBox.setVisible(false);
+        tipoLeggeLabel.setVisible(false);
         //tipo pagina web
         nomeSitoWebLabel.setVisible(false);
         nomeSitoWebTextField.setVisible(false);
@@ -455,10 +473,9 @@ public class FinestraPrincipale extends JFrame {
     }
 
     public void riempiTabella(ArrayList<Riferimento> riferimenti) {
-        DefaultTableModel model = (DefaultTableModel)refTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) riferimentiTable.getModel();
         model.setRowCount(0);
-        for (Riferimento r:riferimenti) {
-            System.out.println(r.getTitolo());
+        for (Riferimento r : riferimenti) {
             model.addRow(new Object[]{r.getTitolo(), r.getTipo(), r.getData(), r.getLingua()});
         }
     }

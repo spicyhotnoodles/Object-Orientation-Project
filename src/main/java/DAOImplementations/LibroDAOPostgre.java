@@ -14,7 +14,7 @@ public class LibroDAOPostgre implements LibroDAO {
     private ArrayList<Libro> libri = new ArrayList<Libro>();
     private Connection connection;
     private String[] inserisciLibro;
-    private Statement ottieniLibri;
+    //private Statement ottieniLibri;
     private String[] modificaLibro;
 
     public LibroDAOPostgre(Connection connection) throws SQLException {
@@ -25,6 +25,8 @@ public class LibroDAOPostgre implements LibroDAO {
         inserisciLibro[1] = "select currval('riferimento_id_riferimento_seq');";
         inserisciLibro[2] = "insert into libro values (?, ?, ?, ?, ?)";
         inserisciLibro[3] = "insert into catalogo values (default, ?, ?);";
+        inserisciLibro[4] = "insert into citazione values (default, ?. ?);";
+        inserisciLibro[5] = "insert into tags values (default, ?, ?);";
         modificaLibro[0] = "update riferimento set titolo=?, autori=?, data_pub=?, descrizione=?, lingua=?, note=? where riferimento_id = cast(? as int);";
         modificaLibro[1] = "update libro set isbn=?, num_pagine=?, serie=?, volume=? where riferimento_id = cast(? as int);";
     }

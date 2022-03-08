@@ -45,7 +45,7 @@ public class Controller {
     public static void main(String[] args) throws SQLException, IOException {
         Controller c = new Controller();
         c.startConnection();
-        Categoria cat = new Categoria("Fantasy");
+        /*Categoria cat = new Categoria("Fantasy");
         String codCategoria = c.categoriaDAO.creaCategoria(cat);
         cat.setCodice(codCategoria);
         List<Categoria> categorie = new ArrayList<Categoria>();
@@ -72,7 +72,7 @@ public class Controller {
         categorie.remove(0);
         l.setTitolo("Il Signore degli Anelli - La compagnia dell'anello");
         l.setCategorie(categorie);
-        c.libroDAO.modificaLibro(l);
+        c.libroDAO.modificaLibro(l);*/
     }
 
     //startConnection() crea una connessione al database

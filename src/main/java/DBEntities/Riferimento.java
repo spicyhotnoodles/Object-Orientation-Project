@@ -13,6 +13,8 @@ public class Riferimento {
     private String tipo;
     private String note;
     private List<Categoria> categorie;
+    private List<String> tags;
+    private List<Riferimento> rimandi;
 
     protected Riferimento(Builder<?> builder) {
         codice = builder.codice;
@@ -24,18 +26,20 @@ public class Riferimento {
         tipo = builder.tipo;
         note = builder.note;
         categorie = builder.categorie;
+        tags = builder.tags;
+        rimandi = builder.rimandi;
     }
 
-    /*public static Builder builder() {
+    public static Builder builder() {
         return new Builder() {
             @Override
             public Builder getThis() {
                 return this;
             }
         };
-    }*/
+    }
 
-    abstract static class Builder<T extends Builder<T>> {
+    public abstract static class Builder<T extends Builder<T>> {
         private String codice;
         private String titolo;
         private List<String> autori;
@@ -45,6 +49,8 @@ public class Riferimento {
         private String tipo;
         private String note;
         private List<Categoria> categorie;
+        private List<String> tags;
+        private List<Riferimento> rimandi;
 
         public abstract T getThis();
 
@@ -93,6 +99,16 @@ public class Riferimento {
             return this.getThis();
         }
 
+        public T tags(List<String> tags) {
+            this.tags = tags;
+            return this.getThis();
+        }
+
+        public T rimandi(List<Riferimento> rimandi) {
+            this.rimandi = rimandi;
+            return this.getThis();
+        }
+
         public Riferimento build() {
             return new Riferimento(this);
         }
@@ -109,7 +125,9 @@ public class Riferimento {
                 ", lingua='" + lingua + '\'' +
                 ", tipo='" + tipo + '\'' +
                 ", note='" + note + '\'' +
-                ", categorie=" + categorie + '\'';
+                ", categorie=" + categorie + '\'' +
+                ", tags= " + tags + '\'' +
+                ", rimandi= " + rimandi + '\'';
     }
 
     public String getTitolo() {
@@ -139,6 +157,10 @@ public class Riferimento {
     public List<Categoria> getCategorie() { return categorie; }
 
     public String getCodice() { return codice; }
+
+    public List<String> getTags() { return tags; }
+
+    public List<Riferimento> getRimandi() { return rimandi; }
 
     public void setCodice(String codice) {
         this.codice = codice;
@@ -174,5 +196,13 @@ public class Riferimento {
 
     public void setCategorie(List<Categoria> categorie) {
         this.categorie = categorie;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public void setRimandi(List<Riferimento> rimandi) {
+        this.rimandi = rimandi;
     }
 }

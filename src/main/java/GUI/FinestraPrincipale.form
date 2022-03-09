@@ -166,12 +166,16 @@
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <enabled value="true"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="7d567" class="javax.swing.JTable" binding="riferimentiTable">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <enabled value="true"/>
+                </properties>
               </component>
             </children>
           </scrollpane>
@@ -905,7 +909,7 @@
                       <text value="1 Tag"/>
                     </properties>
                   </component>
-                  <component id="6e1f8" class="javax.swing.JList" binding="addTagList">
+                  <component id="6e1f8" class="javax.swing.JList" binding="tagRiferimentoList">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="50"/>
@@ -959,7 +963,7 @@
                       <text value="1 Collegamento"/>
                     </properties>
                   </component>
-                  <component id="fb4b4" class="javax.swing.JList" binding="refLinkList">
+                  <component id="fb4b4" class="javax.swing.JList" binding="rimandiList">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="50"/>

@@ -38,13 +38,14 @@ public class Controller {
         per passare un oggetto di tipo controllore alla finestra principale dell'applicativo e
         consentirgli di interagire con i metodi della classe Controller.
          */
+        startConnection();
+        riferimentoDAO = new RiferimentoDAOPostgre(connection);
         fp = new FinestraPrincipale("Titolo",this);
         fp.setVisible(true);
     }
 
     public static void main(String[] args) throws SQLException, IOException {
         Controller c = new Controller();
-        c.startConnection();
         /*Categoria cat = new Categoria("Fantasy");
         String codCategoria = c.categoriaDAO.creaCategoria(cat);
         cat.setCodice(codCategoria);
@@ -97,37 +98,7 @@ public class Controller {
 
     public ArrayList<Riferimento> ottieniRiferimenti() {
         ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
-        List<String> autori = new ArrayList<String>();
-        List<String> autori2 = new ArrayList<String>();
-        autori.add("George R.R. Martin");
-        autori2.add("Autore di prova");
-        Libro l = Libro.builder()
-                .titolo("Il Trono di Spade. Un gioco di troni")
-                .descrizione("Valar Morghulis.")
-                .data("2019")
-                .lingua("Inglese")
-                .tipo("libro")
-                .note("Questa è una mia nota personale circa il riferimento")
-                .autori(autori)
-                .pagine("829")
-                .isbn("978-8804711957")
-                .serie("Cronache del Ghiaccio e del Fuoco")
-                .volume("Primo")
-                .build();
-        Web w = Web.builder()
-                .titolo("Titolo di prova")
-                .descrizione("Descrizione di prova")
-                .data("2022")
-                .lingua("Italiano")
-                .tipo("web")
-                .note("Questa è una mia nota personale circa il riferimento")
-                .autori(autori2)
-                .sito("Social Network di prova")
-                .url("www.socialnetworkdiprova.it")
-                .tipoSito("Social Network")
-                .build();
-        riferimenti.add(l);
-        riferimenti.add(w);
+        riferimenti = riferimentoDAO.ottieniRiferimenti();
         return riferimenti;
     }
 }

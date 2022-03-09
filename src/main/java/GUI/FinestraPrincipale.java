@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import DBEntities.Libro;
-import DBEntities.Riferimento;
+import DBEntities.*;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 
@@ -133,13 +132,13 @@ public class FinestraPrincipale extends JFrame {
     //elementi del pannello dei collegamenti
     private JLabel refLinkLabel;
     private JButton addRefLinkButton;
-    private JList refLinkList;
+    private JList rimandiList;
     private JButton deleteRefLinkButton;
     private JButton changeRefLinkButton;
     private JPanel tagPanel;
     private JTextField addTagTextField;
     private JButton addTagButton;
-    private JList addTagList;
+    private JList tagRiferimentoList;
     private JButton deleteTagButton;
     private JButton changeTagButton;
     private JLabel addTagLabel;
@@ -151,6 +150,9 @@ public class FinestraPrincipale extends JFrame {
     private JLabel testataGiornaleLabel;
     private JLabel tipoLeggeLabel;
     private JComboBox tipoLeggeComboBox;
+    private DefaultListModel listaAutoriDLModel = new DefaultListModel<String>();
+    private DefaultListModel listaTagDLModel = new DefaultListModel<String>();
+    private DefaultListModel listaRimandiDLModel = new DefaultListModel<String>();
 
 
     //Lista icone per i pulsanti:
@@ -206,6 +208,9 @@ public class FinestraPrincipale extends JFrame {
         registaList.setBorder(new LineBorder(Color.GRAY));
         ospitiIntervistaList.setBorder(new LineBorder(Color.GRAY));
         contributoreLeggeList.setBorder(new LineBorder(Color.GRAY));
+        autoreList.setModel(listaAutoriDLModel);
+        tagRiferimentoList.setModel(listaTagDLModel);
+        rimandiList.setModel(listaRimandiDLModel);
         //oscura tutti gli attributi
         nascondiAttributiDiscriminanti();
         riferimenti = theController.ottieniRiferimenti();
@@ -382,15 +387,65 @@ public class FinestraPrincipale extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                //riferimenti.get(0).toString();
-                //Riferimento r = riferimenti.get(refTable.getModel().getValueAt(refTable.getSelectedRow()));
-                System.out.println(riferimenti.get(riferimentiTable.getSelectedRow()));
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Libro) {
-                    Libro l = (Libro) riferimenti.get(riferimentiTable.getSelectedRow());
-                    l.toString();
-                    //titoloRiferimentoLabel.setText("LIBROOOOOO");
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    Libro libro = (Libro) riferimenti.get(riferimentiTable.getSelectedRow());
+                    mostraCampiLibro();
+                    tipoRiferimentoComboBox.setSelectedIndex(0);
+                    titoloRiferimentoTextField.setText(libro.getTitolo());
+                    for (String a: libro.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: libro.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: libro.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    descrizioneRiferimentoTextArea.setText(libro.getDescrizione());
+                    dataTextField.setText(libro.getData());
+                    linguaTextField.setText(libro.getLingua());
+                    isbnTextField.setText(libro.getIsbn());
+                    serieTextField.setText(libro.getSerie());
+                    numeroPagineTextField.setText(libro.getPagine());
+                    volumeTextField.setText(libro.getVolume());
+                    notesTextArea.setText(libro.getNote());
                 }
-
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Rivista) {
+                    Rivista rivista = (Rivista) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Convegno) {
+                    Convegno convegno = (Convegno) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Giornale) {
+                    Giornale giornale = (Giornale) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Tesi) {
+                    Tesi tesi = (Tesi) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Web) {
+                    Web web = (Web) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Film) {
+                    Film film = (Film) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Intervista) {
+                    Intervista intervista = (Intervista) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Legge) {
+                    Legge legge = (Legge) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
+                if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Podcast) {
+                    Podcast podcast = (Podcast) riferimenti.get(riferimentiTable.getSelectedRow());
+                    //imposta la gui
+                }
             }
         });
     }
@@ -472,9 +527,27 @@ public class FinestraPrincipale extends JFrame {
         mezzoDistribuzioneIntervistaTextField.setVisible(false);
     }
 
+    public void mostraCampiLibro() {
+        nascondiAttributiDiscriminanti();
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        autoreList.setVisible(true);
+        autoreLabel.setVisible(true);
+        autoreLabel.setVisible(true);
+        isbnLabel.setVisible(true);
+        isbnTextField.setVisible(true);
+        volumeLabel.setVisible(true);
+        volumeTextField.setVisible(true);
+        numeroPagineLabel.setVisible(true);
+        numeroPagineTextField.setVisible(true);
+        serieLabel.setVisible(true);
+        serieTextField.setVisible(true);
+    }
+
     public void riempiTabella(ArrayList<Riferimento> riferimenti) {
         DefaultTableModel model = (DefaultTableModel) riferimentiTable.getModel();
         model.setRowCount(0);
+        riferimentiTable.setDefaultEditor(Object.class, null); //rende la tabella non editabile
         for (Riferimento r : riferimenti) {
             model.addRow(new Object[]{r.getTitolo(), r.getTipo(), r.getData(), r.getLingua()});
         }

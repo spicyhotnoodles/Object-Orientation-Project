@@ -117,7 +117,8 @@ public class Riferimento {
 
     @Override
     public String toString() {
-        return "codice='" + codice +
+        return "Riferimento{" +
+                "codice='" + codice + '\'' +
                 ", titolo='" + titolo + '\'' +
                 ", autori=" + autori +
                 ", descrizione='" + descrizione + '\'' +
@@ -125,9 +126,10 @@ public class Riferimento {
                 ", lingua='" + lingua + '\'' +
                 ", tipo='" + tipo + '\'' +
                 ", note='" + note + '\'' +
-                ", categorie=" + categorie + '\'' +
-                ", tags= " + tags + '\'' +
-                ", rimandi= " + rimandi + '\'';
+                ", categorie=" + categorie +
+                ", tags=" + tags +
+                ", rimandi=" + rimandi +
+                '}';
     }
 
     public String getTitolo() {

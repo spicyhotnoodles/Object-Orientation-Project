@@ -6,7 +6,7 @@ public class Libro extends Riferimento {
     private String serie;
     private String volume;
 
-    public Libro(Builder builder) {
+    protected Libro(Builder builder) {
         super(builder);
         this.pagine = builder.pagine;
         this.isbn = builder.isbn;
@@ -54,11 +54,32 @@ public class Libro extends Riferimento {
         }
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return "Libro{" +
                 super.toString() + '\'' +
                 "pagine='" + pagine + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", serie='" + serie + '\'' +
+                ", volume='" + volume + '\'' +
+                '}';
+    }*/
+
+    @Override
+    public String toString() {
+        return "Libro{ " +
+                "codice='" + super.getCodice() +
+                ", titolo='" + super.getTitolo() + '\'' +
+                ", autori=" + super.getAutori() +
+                ", descrizione='" + super.getDescrizione() + '\'' +
+                ", data='" + super.getData() + '\'' +
+                ", lingua='" + super.getLingua() + '\'' +
+                ", tipo='" + super.getTipo() + '\'' +
+                ", note='" + super.getNote() + '\'' +
+                ", categorie=" + super.getCategorie() + '\'' +
+                ", tags= " + super.getTags() + '\'' +
+                ", rimandi= " + super.getRimandi() + '\'' +
+                ", pagine='" + pagine + '\'' +
                 ", isbn='" + isbn + '\'' +
                 ", serie='" + serie + '\'' +
                 ", volume='" + volume + '\'' +

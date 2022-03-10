@@ -19,6 +19,7 @@
             <artifactId>ikonli-swing</artifactId>
             <version>12.3.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-materialdesign-pack</artifactId>

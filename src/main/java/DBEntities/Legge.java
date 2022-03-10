@@ -40,4 +40,32 @@ public class Legge extends Riferimento {
             return this;
         }
     }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    @Override
+    public String getTipo() {
+        return tipo;
+    }
+
+    @Override
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    @Override
+    public String getCodice() {
+        return codice;
+    }
+
+    @Override
+    public void setCodice(String codice) {
+        this.codice = codice;
+    }
 }

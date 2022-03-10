@@ -101,4 +101,8 @@ public class Controller {
         riferimenti = riferimentoDAO.ottieniRiferimenti();
         return riferimenti;
     }
+
+    public void eliminaLibro(String id) throws SQLException {
+        libroDAO.eliminaLibro(id);
+    }
 }

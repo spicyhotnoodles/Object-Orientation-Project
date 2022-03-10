@@ -41,6 +41,27 @@ public class Film extends Riferimento {
         }
     }
 
+    public String getIsan() {
+        return isan;
+    }
 
+    public void setIsan(String isan) {
+        this.isan = isan;
+    }
 
+    public String getGenere() {
+        return genere;
+    }
+
+    public void setGenere(String genere) {
+        this.genere = genere;
+    }
+
+    public String getDistribuzione() {
+        return distribuzione;
+    }
+
+    public void setDistribuzione(String distribuzione) {
+        this.distribuzione = distribuzione;
+    }
 }

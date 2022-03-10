@@ -63,4 +63,15 @@ public class Web extends Riferimento {
         return tipoSito;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setSito(String sito) {
+        this.sito = sito;
+    }
+
+    public void setTipoSito(String tipoSito) {
+        this.tipoSito = tipoSito;
+    }
 }

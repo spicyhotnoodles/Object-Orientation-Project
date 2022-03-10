@@ -3,7 +3,10 @@ package DAOImplementations;
 import DAO.LibroDAO;
 import DBEntities.Categoria;
 import DBEntities.Libro;
+import GUI.FinestraPrincipale;
 
+import javax.swing.*;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +14,16 @@ import java.util.Stack;
 
 public class LibroDAOPostgre implements LibroDAO {
 
-    private ArrayList<Libro> libri = new ArrayList<Libro>();
     private Connection connection;
     private String[] inserisciLibro;
-    //private Statement ottieniLibri;
     private String[] modificaLibro;
+    private String[] eliminaLibro;
 
     public LibroDAOPostgre(Connection connection) throws SQLException {
         this.connection = connection;
         inserisciLibro = new String[6];
         modificaLibro = new String[2];
+        eliminaLibro = new String[2];
         inserisciLibro[0] = "insert into riferimento values (default, ?, ?, ?, ?, ?, ?, cast(? as tipologia));";
         inserisciLibro[1] = "select currval('riferimento_id_riferimento_seq');";
         inserisciLibro[2] = "insert into libro values (?, ?, ?, ?, ?)";
@@ -29,54 +32,8 @@ public class LibroDAOPostgre implements LibroDAO {
         inserisciLibro[5] = "insert into tags values (default, ?, ?);";
         modificaLibro[0] = "update riferimento set titolo=?, autori=?, data_pub=?, descrizione=?, lingua=?, note=? where riferimento_id = cast(? as int);";
         modificaLibro[1] = "update libro set isbn=?, num_pagine=?, serie=?, volume=? where riferimento_id = cast(? as int);";
-    }
-
-    /*@Override
-    public List<Libro> ottieniLibri() throws SQLException {
-        libri.clear();
-        ResultSet rs = ottieniLibri.executeQuery("" +
-                "select r.riferimento_id as id, r.titolo, r.autori, r.data_pub, r.descrizione, r.lingua, r.note," +
-                " r.tipo, l.isbn, l.num_pagine as pagine, l.serie, l.volume \n" +
-                "from riferimento as r inner join libro as l on r.riferimento_id = l.riferimento_id");
-        while(rs.next()) {
-            String s = rs.getString("autore");
-            Libro libro = Libro.builder()
-                    .titolo(rs.getString("titolo"))
-                    .autori(estraiAutori(s))
-                    .descrizione(rs.getString("descrizione"))
-                    .data(rs.getString("data"))
-                    .lingua(rs.getString("lingua"))
-                    .tipo(rs.getString("tipo"))
-                    .note(rs.getString("note"))
-                    .isbn(rs.getString("isbn"))
-                    .pagine(rs.getString("pagine"))
-                    .serie(rs.getString("serie"))
-                    .volume(rs.getString("volume"))
-                    .build();
-            libri.add(libro);
-        }
-        return libri;
-    }*/
-
-    public ArrayList<String> estraiAutori(String str) {
-        Stack<Integer> dels = new Stack<Integer>();
-        ArrayList<String> autori = new ArrayList<String>();
-        for(int i = 0; i < str.length(); i++)
-        {
-            if (str.charAt(i) == '[')
-                dels.add(i);
-            else if (str.charAt(i) == ']' &&
-                    !dels.isEmpty())
-            {
-                int pos = dels.peek();
-                dels.pop();
-                int len = i - 1 - pos;
-                String ans = str.substring(
-                        pos + 1, pos + 1 + len);
-                autori.add(ans);
-            }
-        }
-        return autori;
+        eliminaLibro[0] = "delete from riferimento where riferimento_id = ?";
+        eliminaLibro[1] = "delete from libro where riferimento_id = ?";
     }
 
     @Override
@@ -239,6 +196,25 @@ public class LibroDAOPostgre implements LibroDAO {
             }
         }
         return 0;
+    }
+
+    @Override
+    public void eliminaLibro(String id) throws SQLException {
+        try {
+            connection.setAutoCommit(false);
+            PreparedStatement ps = connection.prepareStatement(eliminaLibro[0]);
+            ps.setString(1, id);
+            ps.executeUpdate();
+            try {
+                ps = connection.prepareStatement(eliminaLibro[1]);
+                ps.setString(1, id);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("Transazione interrotta! Seconda operazione di eliminazione fallita:\n" + e);
+            }
+        } catch (SQLException e) {
+            System.out.println("Transazione interrotta! Prima operazione di eliminazione fallita:\n" + e);
+        }
     }
 
 }

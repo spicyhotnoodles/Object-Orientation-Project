@@ -42,4 +42,28 @@ public class Intervista extends  Riferimento {
             return this;
         }
     }
+
+    public String getDoi() {
+        return doi;
+    }
+
+    public void setDoi(String doi) {
+        this.doi = doi;
+    }
+
+    public String getMezzo() {
+        return mezzo;
+    }
+
+    public void setMezzo(String mezzo) {
+        this.mezzo = mezzo;
+    }
+
+    public ArrayList<String> getOspiti() {
+        return ospiti;
+    }
+
+    public void setOspiti(ArrayList<String> ospiti) {
+        this.ospiti = ospiti;
+    }
 }

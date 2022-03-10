@@ -41,4 +41,29 @@ public class Tesi extends Riferimento {
         }
     }
 
+    public String getDoi() {
+        return doi;
+    }
+
+    public void setDoi(String doi) {
+        this.doi = doi;
+    }
+
+    @Override
+    public String getTipo() {
+        return tipo;
+    }
+
+    @Override
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getAteneo() {
+        return ateneo;
+    }
+
+    public void setAteneo(String ateneo) {
+        this.ateneo = ateneo;
+    }
 }

@@ -40,4 +40,27 @@ public class Giornale extends Riferimento {
         }
     }
 
+    public String getIssn() {
+        return issn;
+    }
+
+    public void setIssn(String issn) {
+        this.issn = issn;
+    }
+
+    public String getTestata() {
+        return testata;
+    }
+
+    public void setTestata(String testata) {
+        this.testata = testata;
+    }
+
+    public String getSezione() {
+        return sezione;
+    }
+
+    public void setSezione(String sezione) {
+        this.sezione = sezione;
+    }
 }

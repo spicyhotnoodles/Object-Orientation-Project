@@ -39,7 +39,29 @@ public class Rivista extends Riferimento {
             this.fascicolo = fascicolo;
             return this;
         }
-
     }
 
+    public String getIssn() {
+        return issn;
+    }
+
+    public void setIssn(String issn) {
+        this.issn = issn;
+    }
+
+    public String getPagine() {
+        return pagine;
+    }
+
+    public void setPagine(String pagine) {
+        this.pagine = pagine;
+    }
+
+    public String getFascicolo() {
+        return fascicolo;
+    }
+
+    public void setFascicolo(String fascicolo) {
+        this.fascicolo = fascicolo;
+    }
 }

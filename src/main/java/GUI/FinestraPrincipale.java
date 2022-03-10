@@ -126,7 +126,6 @@ public class FinestraPrincipale extends JFrame {
     private JPanel notePanel;
     //elementi del pannello delle note
     private JTextArea notesTextArea;
-    private JButton saveNotesButton;
     private JButton clearNotesButton;
     private JPanel collegamentiPanel;
     //elementi del pannello dei collegamenti
@@ -139,8 +138,8 @@ public class FinestraPrincipale extends JFrame {
     private JTextField addTagTextField;
     private JButton addTagButton;
     private JList tagRiferimentoList;
-    private JButton deleteTagButton;
-    private JButton changeTagButton;
+    private JButton eliminaTagButton;
+    private JButton modificaTagButton;
     private JLabel addTagLabel;
     private JTextField mezzoDistribuzioneIntervistaTextField;
     private JLabel mezzoDistribuzioneIntervistaLabel;
@@ -150,9 +149,11 @@ public class FinestraPrincipale extends JFrame {
     private JLabel testataGiornaleLabel;
     private JLabel tipoLeggeLabel;
     private JComboBox tipoLeggeComboBox;
+    private JButton chiudiButton;
     private DefaultListModel listaAutoriDLModel = new DefaultListModel<String>();
     private DefaultListModel listaTagDLModel = new DefaultListModel<String>();
     private DefaultListModel listaRimandiDLModel = new DefaultListModel<String>();
+    private DefaultListModel listaOspitiDLModel = new DefaultListModel<String>();
 
 
     //Lista icone per i pulsanti:
@@ -212,22 +213,10 @@ public class FinestraPrincipale extends JFrame {
         tagRiferimentoList.setModel(listaTagDLModel);
         rimandiList.setModel(listaRimandiDLModel);
         //oscura tutti gli attributi
-        nascondiAttributiDiscriminanti();
+        tabbedPane.setVisible(false);
         riferimenti = theController.ottieniRiferimenti();
         riempiTabella(riferimenti);
         //action listners:
-        /*for (Riferimento i: riferimenti)
-            System.out.println(i);
-        Riferimento r = riferimenti.get(0);
-        if (r instanceof Libro) {
-            Libro mylibro = (Libro) r;
-            mylibro.toString();
-        }
-        if (r instanceof Web) {
-            Web myWeb = (Web) r;
-            myWeb.toString();
-        }*/
-        //action listner per il pulsante di creazione di una (sotto)categoria
         creaCategoriaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -240,125 +229,34 @@ public class FinestraPrincipale extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Libro")) {
                     nascondiAttributiDiscriminanti();
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    autoreList.setVisible(true);
-                    autoreLabel.setVisible(true);
-                    autoreLabel.setVisible(true);
-                    isbnLabel.setVisible(true);
-                    isbnTextField.setVisible(true);
-                    volumeLabel.setVisible(true);
-                    volumeTextField.setVisible(true);
-                    numeroPagineLabel.setVisible(true);
-                    numeroPagineTextField.setVisible(true);
-                    serieLabel.setVisible(true);
-                    serieTextField.setVisible(true);
+                    mostraCampiLibro();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Atto di convegno")) {
                     nascondiAttributiDiscriminanti();
-                    autoreList.setVisible(true);
-                    autoreLabel.setVisible(true);
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    doiLabel.setVisible(true);
-                    doiTextField.setVisible(true);
-                    luogoConvegnoLabel.setVisible(true);
-                    luogoConvegnoTextField.setVisible(true);
+                    mostraCampiConvegno();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Articolo di rivista")) {
                     nascondiAttributiDiscriminanti();
-                    issnLabel.setVisible(true);
-                    issnTextField.setVisible(true);
-                    autoreLabel.setVisible(true);
-                    autoreList.setVisible(true);
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    numeroPagineLabel.setVisible(true);
-                    numeroPagineTextField.setVisible(true);
-                    numeroFascicoloLabel.setVisible(true);
-                    numeroFascicoloTextField.setVisible(true);
+                    mostraCampiRivista();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Articolo di giornale")) {
                     nascondiAttributiDiscriminanti();
-                    issnLabel.setVisible(true);
-                    issnTextField.setVisible(true);
-                    autoreLabel.setVisible(true);
-                    autoreList.setVisible(true);
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    sezioneLabel.setVisible(true);
-                    sezioneTextField.setVisible(true);
-                    testataGiornaleLabel.setVisible(true);
-                    testataGiornaletextField.setVisible(true);
+                    mostraCampiGiornale();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Legge")) {
                     nascondiAttributiDiscriminanti();
-                    codiceLeggeLabel.setVisible(true);
-                    codiceLeggeTextField.setVisible(true);
-                    numeroLeggeLabel.setVisible(true);
-                    numeroLeggeTextField.setVisible(true);
-                    contributoreLeggeLabel.setVisible(true);
-                    contributoreLeggeList.setVisible(true);
-                    aggiungiContributoreLeggeButton.setVisible(true);
-                    rimuoviContributoreLeggeButton.setVisible(true);
-                    tipoLeggeComboBox.setVisible(true);
-                    tipoLeggeLabel.setVisible(true);
+                    mostraCampiLegge();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Tesi")) {
                     nascondiAttributiDiscriminanti();
-                    autoreList.setVisible(true);
-                    autoreLabel.setVisible(true);
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    doiLabel.setVisible(true);
-                    doiTextField.setVisible(true);
-                    nomeUniversitàLabel.setVisible(true);
-                    nomeUniversitàTextField.setVisible(true);
-                    tipoTesiLabel.setVisible(true);
-                    tipoTesiTextField.setVisible(true);
+                    mostraCampiTesi();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Sito web")) {
                     nascondiAttributiDiscriminanti();
-                    autoreLabel.setVisible(true);
-                    autoreList.setVisible(true);
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    nomeSitoWebLabel.setVisible(true);
-                    nomeSitoWebTextField.setVisible(true);
-                    tipoSitoWebLabel.setVisible(true);
-                    tipoSitoWebTextField.setVisible(true);
+                    mostraCampiWeb();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Intervista")) {
                     nascondiAttributiDiscriminanti();
-                    autoreLabel.setVisible(true);
-                    autoreList.setVisible(true);
-                    doiLabel.setVisible(true);
-                    doiTextField.setVisible(true);
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    ospitiIntervistaLabel.setVisible(true);
-                    ospitiIntervistaList.setVisible(true);
-                    aggiungiOspiteButton.setVisible(true);
-                    rimuoviOspiteButton.setVisible(true);
-                    mezzoDistribuzioneIntervistaLabel.setVisible(true);
-                    mezzoDistribuzioneIntervistaTextField.setVisible(true);
+                    mostraCampiIntervista();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Podcast")) {
                     nascondiAttributiDiscriminanti();
-                    autoreLabel.setVisible(true);
-                    autoreList.setVisible(true);
-                    serieLabel.setVisible(true);
-                    serieTextField.setVisible(true);
-                    aggiungiAutoreButton.setVisible(true);
-                    rimuoviAutoreButton.setVisible(true);
-                    doiLabel.setVisible(true);
-                    doiTextField.setVisible(true);
-                    numeroEpisodioPodcastLabel.setVisible(true);
-                    numeroEpisodioPodcastTextField.setVisible(true);
+                    mostraCampiPodcast();
                 } else if (tipoRiferimentoComboBox.getSelectedItem().equals("Film")) {
                     nascondiAttributiDiscriminanti();
-                    isanLabel.setVisible(true);
-                    isanTextField.setVisible(true);
-                    genereFilmLabel.setVisible(true);
-                    genereFilmTextField.setVisible(true);
-                    distribuzioneFilmLabel.setVisible(true);
-                    distribuzioneFilmTextField.setVisible(true);
-                    aggiungiRegistaButton.setVisible(true);
-                    rimuoviRegistaButton.setVisible(true);
-                    registaLabel.setVisible(true);
-                    registaList.setVisible(true);
+                    mostraCampiFilm();
                 }
             }
         });
@@ -387,6 +285,7 @@ public class FinestraPrincipale extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                tabbedPane.setVisible(true);
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Libro) {
                     listaAutoriDLModel.clear();
                     listaRimandiDLModel.clear();
@@ -412,39 +311,320 @@ public class FinestraPrincipale extends JFrame {
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Rivista) {
                     Rivista rivista = (Rivista) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    mostraCampiRivista();
+                    tipoRiferimentoComboBox.setSelectedIndex(2);
+                    titoloRiferimentoTextField.setText(rivista.getTitolo());
+                    for (String a: rivista.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: rivista.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: rivista.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    descrizioneRiferimentoTextArea.setText(rivista.getDescrizione());
+                    dataTextField.setText(rivista.getData());
+                    linguaTextField.setText(rivista.getLingua());
+                    issnTextField.setText(rivista.getIssn());
+                    numeroPagineTextField.setText(rivista.getPagine());
+                    numeroFascicoloTextField.setText(rivista.getFascicolo());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Convegno) {
                     Convegno convegno = (Convegno) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    mostraCampiConvegno();
+                    tipoRiferimentoComboBox.setSelectedIndex(1);
+                    titoloRiferimentoTextField.setText(convegno.getTitolo());
+                    for (String a: convegno.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: convegno.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: convegno.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    descrizioneRiferimentoTextArea.setText(convegno.getDescrizione());
+                    dataTextField.setText(convegno.getData());
+                    linguaTextField.setText(convegno.getLingua());
+                    doiTextField.setText(convegno.getDoi());
+                    luogoConvegnoTextField.setText(convegno.getLuogo());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Giornale) {
                     Giornale giornale = (Giornale) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    mostraCampiGiornale();
+                    tipoRiferimentoComboBox.setSelectedIndex(3);
+                    titoloRiferimentoTextField.setText(giornale.getTitolo());
+                    for (String a: giornale.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: giornale.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: giornale.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    descrizioneRiferimentoTextArea.setText(giornale.getDescrizione());
+                    dataTextField.setText(giornale.getData());
+                    linguaTextField.setText(giornale.getLingua());
+                    issnTextField.setText(giornale.getIssn());
+                    testataGiornaletextField.setText(giornale.getTestata());
+                    sezioneTextField.setText(giornale.getSezione());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Tesi) {
                     Tesi tesi = (Tesi) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaTagDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    mostraCampiTesi();
+                    tipoRiferimentoComboBox.setSelectedIndex(5);
+                    titoloRiferimentoTextField.setText(tesi.getTitolo());
+                    for (String a: tesi.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: tesi.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: tesi.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    descrizioneRiferimentoTextArea.setText(tesi.getDescrizione());
+                    dataTextField.setText(tesi.getData());
+                    linguaTextField.setText(tesi.getLingua());
+                    doiTextField.setText(tesi.getDoi());
+                    tipoTesiTextField.setText(tesi.getTipo());
+                    nomeUniversitàTextField.setText(tesi.getAteneo());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Web) {
                     Web web = (Web) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    mostraCampiWeb();
+                    tipoRiferimentoComboBox.setSelectedIndex(6);
+                    titoloRiferimentoTextField.setText(web.getTitolo());
+                    for (String a: web.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: web.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: web.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    descrizioneRiferimentoTextArea.setText(web.getDescrizione());
+                    dataTextField.setText(web.getData());
+                    linguaTextField.setText(web.getLingua());
+                    urlTextField.setText(web.getUrl());
+                    nomeSitoWebTextField.setText(web.getSito());
+                    tipoSitoWebTextField.setText(web.getTipoSito());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Film) {
                     Film film = (Film) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaTagDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    mostraCampiFilm();
+                    tipoRiferimentoComboBox.setSelectedIndex(9);
+                    titoloRiferimentoTextField.setText(film.getTitolo());
+                    for (String a: film.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: film.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: film.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    descrizioneRiferimentoTextArea.setText(film.getDescrizione());
+                    dataTextField.setText(film.getData());
+                    linguaTextField.setText(film.getLingua());
+                    isanTextField.setText(film.getIsan());
+                    genereFilmTextField.setText(film.getGenere());
+                    distribuzioneFilmTextField.setText(film.getDistribuzione());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Intervista) {
                     Intervista intervista = (Intervista) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    listaOspitiDLModel.clear();
+                    mostraCampiIntervista();
+                    titoloRiferimentoTextField.setText(intervista.getTitolo());
+                    for (String a: intervista.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: intervista.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: intervista.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    for (String o: intervista.getOspiti())
+                    descrizioneRiferimentoTextArea.setText(intervista.getDescrizione());
+                    dataTextField.setText(intervista.getData());
+                    linguaTextField.setText(intervista.getLingua());
+                    doiTextField.setText(intervista.getDoi());
+                    mezzoDistribuzioneIntervistaTextField.setText(intervista.getMezzo());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Legge) {
                     Legge legge = (Legge) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    mostraCampiLegge();
+                    titoloRiferimentoTextField.setText(legge.getTitolo());
+                    for (String a: legge.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: legge.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: legge.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    dataTextField.setText(legge.getData());
+                    linguaTextField.setText(legge.getLingua());
+                    numeroLeggeTextField.setText(legge.getNumero());
+                    codiceLeggeTextField.setText(legge.getCodice());
+                    if (legge.getTipo().equalsIgnoreCase("Legge"))
+                        tipoLeggeComboBox.setSelectedIndex(1);
+                    if (legge.getTipo().equalsIgnoreCase("Decreto"))
+                        tipoLeggeComboBox.setSelectedIndex(2);
+                    if (legge.getTipo().equalsIgnoreCase("Altro"))
+                        tipoLeggeComboBox.setSelectedIndex(3);
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Podcast) {
                     Podcast podcast = (Podcast) riferimenti.get(riferimentiTable.getSelectedRow());
-                    //imposta la gui
+                    listaAutoriDLModel.clear();
+                    listaRimandiDLModel.clear();
+                    listaTagDLModel.clear();
+                    mostraCampiPodcast();
+                    titoloRiferimentoTextField.setText(podcast.getTitolo());
+                    for (String a: podcast.getAutori())
+                        listaAutoriDLModel.addElement(a.toString());
+                    for (String t: podcast.getTags())
+                        listaTagDLModel.addElement(t.toString());
+                    for (Riferimento r: podcast.getRimandi())
+                        listaRimandiDLModel.addElement(r.getTitolo());
+                    dataTextField.setText(podcast.getData());
+                    linguaTextField.setText(podcast.getLingua());
+                    numeroEpisodioPodcastTextField.setText(podcast.getEpisodio());
+                    doiTextField.setText(podcast.getDoi());
+                    serieTextField.setText(podcast.getSerie());
+                }
+            }
+        });
+        chiudiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                tabbedPane.setVisible(false);
+                titoloRiferimentoTextField.setText("");
+                descrizioneRiferimentoTextArea.setText("");
+                listaAutoriDLModel.clear();
+                dataTextField.setText("");
+                linguaTextField.setText("");
+                issnTextField.setText("");
+                issnTextField.setText("");
+                doiTextField.setText("");
+                isanTextField.setText("");
+                numeroLeggeTextField.setText("");
+                serieTextField.setText("");
+                numeroPagineTextField.setText("");
+                volumeTextField.setText("");
+                nomeSitoWebTextField.setText("");
+                tipoLeggeComboBox.setSelectedIndex(0);
+                tipoSitoWebTextField.setText("");
+                numeroFascicoloTextField.setText("");
+                luogoConvegnoTextField.setText("");
+                testataGiornaletextField.setText("");
+                sezioneTextField.setText("");
+                tipoTesiTextField.setText("");
+                nomeUniversitàTextField.setText("");
+                codiceLeggeTextField.setText("");
+                numeroEpisodioPodcastTextField.setText("");
+                distribuzioneFilmTextField.setText("");
+                mezzoDistribuzioneIntervistaTextField.setText("");
+                genereFilmTextField.setText("");
+                urlTextField.setText("");
+                notesTextArea.setText("");
+                listaTagDLModel.clear();
+                listaRimandiDLModel.clear();
+            }
+        });
+        aggiungiRiferimentoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String tipo[] = {"Libro", "Atto di convegno", "Articolo di rivista", "Articolo di giornale", "Legge", "Tesi", "Sito web", "Intervista", "Podcast", "Film"};
+                JComboBox cb = new JComboBox(tipo);
+                int input;
+                input = JOptionPane.showConfirmDialog(mainPanel, cb, "Seleziona il tipo di riferimento", JOptionPane.DEFAULT_OPTION);
+                if (input == JOptionPane.OK_OPTION) {
+                    if (cb.getSelectedItem().equals("Libro")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(0);
+                        mostraCampiLibro();
+                    }
+                    if (cb.getSelectedItem().equals("Atto di convegno")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(1);
+                        mostraCampiConvegno();
+                    }
+                    if (cb.getSelectedItem().equals("Articolo di rivista")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(2);
+                        mostraCampiRivista();
+                    }
+                    if (cb.getSelectedItem().equals("Articolo di giornale")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(3);
+                        mostraCampiGiornale();
+                    }
+                    if (cb.getSelectedItem().equals("Legge")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(4);
+                        mostraCampiLegge();
+                    }
+                    if (cb.getSelectedItem().equals("Tesi")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(5);
+                        mostraCampiTesi();
+                    }
+                    if (cb.getSelectedItem().equals("Sito web")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(6);
+                        mostraCampiWeb();
+                    }
+                    if (cb.getSelectedItem().equals("Intervista")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(7);
+                        mostraCampiIntervista();
+                    }
+                    if (cb.getSelectedItem().equals("Podcast")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(8);
+                        mostraCampiPodcast();
+                    }
+                    if (cb.getSelectedItem().equals("Film")) {
+                        nascondiAttributiDiscriminanti();
+                        tabbedPane.setVisible(true);
+                        tipoRiferimentoComboBox.setSelectedIndex(9);
+                        mostraCampiFilm();
+                    }
+                }
+            }
+        });
+        eliminaRiferimentoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (riferimentiTable.getSelectedRow() == -1)
+                    JOptionPane.showMessageDialog(mainPanel, "Selezionare il valore da modificare!", "Errore!", JOptionPane.ERROR_MESSAGE);
+                else {
+                    int input;
+                    input = JOptionPane.showConfirmDialog(mainPanel, "Sei sicuro di voler eliminare il riferimento \"" + riferimenti.get(riferimentiTable.getSelectedRow()).getTitolo() + "\"?");
+                    if (input == JOptionPane.YES_OPTION)
+                        //JOptionPane.showMessageDialog(mainPanel, "Allora lo eliminerlò quando avrai implementato questa funzionalità");
+                        if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Libro) {
+                            try {
+                                c.eliminaLibro(riferimenti.get(riferimentiTable.getSelectedRow()).getCodice());
+                            } catch (SQLException e) {
+                                System.out.println("Eliminazione del libro fallita!\n" + e);
+                            }
+                        }
                 }
             }
         });
@@ -455,7 +635,6 @@ public class FinestraPrincipale extends JFrame {
     }
 
     private void nascondiAttributiDiscriminanti() {
-        //tipo libro
         autoreList.setVisible(false);
         autoreLabel.setVisible(false);
         aggiungiAutoreButton.setVisible(false);
@@ -468,22 +647,18 @@ public class FinestraPrincipale extends JFrame {
         numeroPagineTextField.setVisible(false);
         serieLabel.setVisible(false);
         serieTextField.setVisible(false);
-        //tipo articolo di giornale
         sezioneLabel.setVisible(false);
         sezioneTextField.setVisible(false);
         issnLabel.setVisible(false);
         issnTextField.setVisible(false);
         testataGiornaleLabel.setVisible(false);
         testataGiornaletextField.setVisible(false);
-        //tipo articolo di rivista
         numeroFascicoloLabel.setVisible(false);
         numeroFascicoloTextField.setVisible(false);
-        //tipo atto di convengo
         doiLabel.setVisible(false);
         doiTextField.setVisible(false);
         luogoConvegnoLabel.setVisible(false);
         luogoConvegnoTextField.setVisible(false);
-        //tipo film
         registaLabel.setVisible(false);
         registaList.setVisible(false);
         aggiungiRegistaButton.setVisible(false);
@@ -494,7 +669,6 @@ public class FinestraPrincipale extends JFrame {
         distribuzioneFilmTextField.setVisible(false);
         isanLabel.setVisible(false);
         isanTextField.setVisible(false);
-        //tipo legge
         codiceLeggeLabel.setVisible(false);
         codiceLeggeTextField.setVisible(false);
         contributoreLeggeLabel.setVisible(false);
@@ -505,20 +679,18 @@ public class FinestraPrincipale extends JFrame {
         numeroLeggeTextField.setVisible(false);
         tipoLeggeComboBox.setVisible(false);
         tipoLeggeLabel.setVisible(false);
-        //tipo pagina web
+        urlTextField.setVisible(false);
+        urlLabel.setVisible(false);
         nomeSitoWebLabel.setVisible(false);
         nomeSitoWebTextField.setVisible(false);
         tipoSitoWebLabel.setVisible(false);
         tipoSitoWebTextField.setVisible(false);
-        //tipo podcast
         numeroEpisodioPodcastLabel.setVisible(false);
         numeroEpisodioPodcastTextField.setVisible(false);
-        //tipo tesi
         tipoTesiLabel.setVisible(false);
         tipoTesiTextField.setVisible(false);
         nomeUniversitàLabel.setVisible(false);
         nomeUniversitàTextField.setVisible(false);
-        //tipo intervista
         ospitiIntervistaLabel.setVisible(false);
         ospitiIntervistaList.setVisible(false);
         aggiungiOspiteButton.setVisible(false);
@@ -544,6 +716,121 @@ public class FinestraPrincipale extends JFrame {
         serieTextField.setVisible(true);
     }
 
+    public void mostraCampiRivista() {
+        issnLabel.setVisible(true);
+        issnTextField.setVisible(true);
+        autoreLabel.setVisible(true);
+        autoreList.setVisible(true);
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        numeroPagineLabel.setVisible(true);
+        numeroPagineTextField.setVisible(true);
+        numeroFascicoloLabel.setVisible(true);
+        numeroFascicoloTextField.setVisible(true);
+    }
+
+    public void mostraCampiGiornale() {
+        issnLabel.setVisible(true);
+        issnTextField.setVisible(true);
+        autoreLabel.setVisible(true);
+        autoreList.setVisible(true);
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        sezioneLabel.setVisible(true);
+        sezioneTextField.setVisible(true);
+        testataGiornaleLabel.setVisible(true);
+        testataGiornaletextField.setVisible(true);
+    }
+
+    public void mostraCampiConvegno() {
+        autoreList.setVisible(true);
+        autoreLabel.setVisible(true);
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        doiLabel.setVisible(true);
+        doiTextField.setVisible(true);
+        luogoConvegnoLabel.setVisible(true);
+        luogoConvegnoTextField.setVisible(true);
+    }
+
+    public void mostraCampiFilm() {
+        isanLabel.setVisible(true);
+        isanTextField.setVisible(true);
+        genereFilmLabel.setVisible(true);
+        genereFilmTextField.setVisible(true);
+        distribuzioneFilmLabel.setVisible(true);
+        distribuzioneFilmTextField.setVisible(true);
+        aggiungiRegistaButton.setVisible(true);
+        rimuoviRegistaButton.setVisible(true);
+        registaLabel.setVisible(true);
+        registaList.setVisible(true);
+    }
+
+    public void mostraCampiPodcast() {
+        autoreLabel.setVisible(true);
+        autoreList.setVisible(true);
+        serieLabel.setVisible(true);
+        serieTextField.setVisible(true);
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        doiLabel.setVisible(true);
+        doiTextField.setVisible(true);
+        numeroEpisodioPodcastLabel.setVisible(true);
+        numeroEpisodioPodcastTextField.setVisible(true);
+    }
+
+    public void mostraCampiIntervista() {
+        autoreLabel.setVisible(true);
+        autoreList.setVisible(true);
+        doiLabel.setVisible(true);
+        doiTextField.setVisible(true);
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        ospitiIntervistaLabel.setVisible(true);
+        ospitiIntervistaList.setVisible(true);
+        aggiungiOspiteButton.setVisible(true);
+        rimuoviOspiteButton.setVisible(true);
+        mezzoDistribuzioneIntervistaLabel.setVisible(true);
+        mezzoDistribuzioneIntervistaTextField.setVisible(true);
+    }
+
+    public void mostraCampiLegge() {
+        codiceLeggeLabel.setVisible(true);
+        codiceLeggeTextField.setVisible(true);
+        numeroLeggeLabel.setVisible(true);
+        numeroLeggeTextField.setVisible(true);
+        contributoreLeggeLabel.setVisible(true);
+        contributoreLeggeList.setVisible(true);
+        aggiungiContributoreLeggeButton.setVisible(true);
+        rimuoviContributoreLeggeButton.setVisible(true);
+        tipoLeggeComboBox.setVisible(true);
+        tipoLeggeLabel.setVisible(true);
+    }
+
+    public void mostraCampiWeb() {
+        autoreLabel.setVisible(true);
+        autoreList.setVisible(true);
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        nomeSitoWebLabel.setVisible(true);
+        nomeSitoWebTextField.setVisible(true);
+        tipoSitoWebLabel.setVisible(true);
+        tipoSitoWebTextField.setVisible(true);
+    }
+
+    public void mostraCampiTesi() {
+        autoreList.setVisible(true);
+        autoreLabel.setVisible(true);
+        aggiungiAutoreButton.setVisible(true);
+        rimuoviAutoreButton.setVisible(true);
+        doiLabel.setVisible(true);
+        doiTextField.setVisible(true);
+        nomeUniversitàLabel.setVisible(true);
+        nomeUniversitàTextField.setVisible(true);
+        tipoTesiLabel.setVisible(true);
+        tipoTesiTextField.setVisible(true);
+    }
+
     public void riempiTabella(ArrayList<Riferimento> riferimenti) {
         DefaultTableModel model = (DefaultTableModel) riferimentiTable.getModel();
         model.setRowCount(0);
@@ -552,5 +839,4 @@ public class FinestraPrincipale extends JFrame {
             model.addRow(new Object[]{r.getTitolo(), r.getTipo(), r.getData(), r.getLingua()});
         }
     }
-
 }

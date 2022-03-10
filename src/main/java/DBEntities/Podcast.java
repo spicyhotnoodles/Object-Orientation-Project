@@ -40,4 +40,28 @@ public class Podcast extends Riferimento {
             return this;
         }
     }
+
+    public String getDoi() {
+        return doi;
+    }
+
+    public void setDoi(String doi) {
+        this.doi = doi;
+    }
+
+    public String getEpisodio() {
+        return episodio;
+    }
+
+    public void setEpisodio(String episodio) {
+        this.episodio = episodio;
+    }
+
+    public String getSerie() {
+        return serie;
+    }
+
+    public void setSerie(String serie) {
+        this.serie = serie;
+    }
 }

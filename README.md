@@ -104,7 +104,7 @@ create table giornale (
 
 create table tesi (
 	doi varchar(20) primary key,
-    tipo varchar(200),
+    tipo_tesi varchar(200),
     ateneo varchar(200),
     riferimento_id int,
     constraint riferimento_tesi foreign key (riferimento_id) references Riferimento(riferimento_id)
@@ -164,8 +164,8 @@ create table citazione (
 create table tag (
 	id_tag serial primary key,
     parola varchar(15) unique,
-    riferiemnto_id int,
-    constraint riferimento_tags foreign key (riferimento_id) references Riferimento(id_riferimento)
+    riferimento_id int,
+    constraint riferimento_tags foreign key (riferimento_id) references Riferimento(riferimento_id)
 )
 
 -- La tabella `categoria` contiene tutte le categorie create dall'utente

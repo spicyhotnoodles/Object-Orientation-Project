@@ -1,17 +1,13 @@
 package GUI;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 /*
 import java.sql.Connection;
 import java.sql.SQLException;
  */
 import DBEntities.*;
-import Exceptions.ConnectionException;
 import DAOImplementations.*;
 import DBConfig.DBConnection;
 
@@ -22,6 +18,7 @@ public class Controller {
     private DBConnection dbconn = null;
     private Connection connection = null;
     //Attributi dei DAO implementati per postgre
+    private TagDAOPostgre tagDAO;
     private CatalogoDAOPostgre catalogoDAO;
     private CategoriaDAOPostgre categoriaDAO;
     private CitazioneDAOPostgre citazioneDAO;
@@ -29,54 +26,22 @@ public class Controller {
     private SottocategoriaDAOPostgre sottocategoriaDAO;
     private LibroDAOPostgre libroDAO;
     private FinestraPrincipale fp;
-    public ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
+    private FrameTabellaRiferimenti finestraTabella;
+    private ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
+    private ArrayList<String> tags = new ArrayList<>();
+    private ArrayList<Categoria> categorie = new ArrayList<>();
 
 
     public Controller() throws SQLException, IOException {
-        /*Il costruttore inizializza tutti i frame dell'applicativo.
-        In particolare, ci sarà un istruzione del tipo <<framePrincipale = new Main("nomeFinestra",this)>>
-        per passare un oggetto di tipo controllore alla finestra principale dell'applicativo e
-        consentirgli di interagire con i metodi della classe Controller.
-         */
         startConnection();
         riferimentoDAO = new RiferimentoDAOPostgre(connection);
-        fp = new FinestraPrincipale("Titolo",this);
-        fp.setVisible(true);
+        finestraTabella = new FrameTabellaRiferimenti("Riferimenti", this);
+        finestraTabella.setVisible(true);
     }
 
     public static void main(String[] args) throws SQLException, IOException {
         Controller c = new Controller();
-        /*Categoria cat = new Categoria("Fantasy");
-        String codCategoria = c.categoriaDAO.creaCategoria(cat);
-        cat.setCodice(codCategoria);
-        List<Categoria> categorie = new ArrayList<Categoria>();
-        categorie.add(cat);
-        List<String> autori = new ArrayList<String>();
-        autori.add("J.R.R. Tolkien");
-        Libro l = Libro.builder()
-                .titolo("Il Signore degli Anelli")
-                .autori(autori)
-                .descrizione("Il miglior fantasy di sempre.")
-                .data("1955")
-                .lingua("Inglese")
-                .tipo("libro")
-                .note("...")
-                .categorie(categorie)
-                .pagine("1395")
-                .isbn("978-8830105263")
-                .serie("Il Signore degli Anelli")
-                .volume("La Compagnia dell'Anello")
-                .build();
-        String codice = c.libroDAO.inserisciLibro(l);
-        l.setCodice(codice);
-        System.out.println(l.toString());
-        categorie.remove(0);
-        l.setTitolo("Il Signore degli Anelli - La compagnia dell'anello");
-        l.setCategorie(categorie);
-        c.libroDAO.modificaLibro(l);*/
     }
-
-    //startConnection() crea una connessione al database
 
     public void startConnection() throws SQLException {
         try {
@@ -90,6 +55,7 @@ public class Controller {
             riferimentoDAO = new RiferimentoDAOPostgre(connection);
             libroDAO = new LibroDAOPostgre(connection);
             sottocategoriaDAO = new SottocategoriaDAOPostgre(connection);
+            tagDAO = new TagDAOPostgre(connection);
         }
         catch (SQLException e) { //catch (SQLException | ConnectionException e) {
             System.out.println("Errore: " + e.getMessage());
@@ -97,12 +63,75 @@ public class Controller {
     }
 
     public ArrayList<Riferimento> ottieniRiferimenti() {
-        ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
         riferimenti = riferimentoDAO.ottieniRiferimenti();
         return riferimenti;
     }
 
-    public void eliminaLibro(String id) throws SQLException {
-        libroDAO.eliminaLibro(id);
+    public ArrayList<Categoria> ottieniCategorie() throws SQLException {
+        categorie = categoriaDAO.ottieniCategorie();
+        return categorie;
+    }
+
+    public void eliminaRiferimento(String id) throws SQLException {
+        riferimentoDAO.eliminaRiferimento(id);
+    }
+
+    public void eliminaCategoria(String id) throws SQLException {
+        categoriaDAO.eliminaCategoria(id);
+    }
+
+    public void aggiungiAlCatalogo(String riferimento_id, String categoria_id) throws SQLException {
+        catalogoDAO.aggiungiAlCatalogo(riferimento_id, categoria_id);
+    }
+
+    public void rimuoviDalCatalogo(String id) throws SQLException {
+        catalogoDAO.rimuoviDalCatalogo(id);
+    }
+
+    public void creaCategoria(Categoria categoria) throws SQLException {
+        categoriaDAO.creaCategoria(categoria);
+    }
+
+    public void creaRiferimento(Riferimento riferimento) throws SQLException {
+        if (riferimento instanceof Libro) {
+            Libro l = (Libro) riferimento;
+            l.setCodice(libroDAO.inserisciLibro(l));
+        }
+    }
+
+    public void modificaRiferimento(Riferimento riferimento) throws SQLException {
+        if (riferimento instanceof  Libro) {
+            Libro l = (Libro) riferimento;
+            libroDAO.modificaLibro(l);
+        }
+    }
+
+    public void mostraInformazioniRiferimento(Riferimento riferimento) {
+        FrameGestioneRiferimento finestraRiferimento = new FrameGestioneRiferimento("Modifica", this);
+        finestraRiferimento.setVisible(true);
+        finestraRiferimento.mostraRiferimento(riferimento, finestraTabella);
+    }
+
+    public void mostraCreazioneRiferimento() {
+        FrameGestioneRiferimento finestraRiferimento = new FrameGestioneRiferimento("Crea", this);
+        finestraRiferimento.setVisible(true);
+        finestraRiferimento.creaNuovoRiferimento(finestraTabella);
+    }
+
+    public ArrayList<String> ottieniTags() throws SQLException {
+        tags = tagDAO.ottieniTags();
+        return tags;
+    }
+
+    public ArrayList<Riferimento> getRiferimenti() {
+        return riferimenti;
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public ArrayList<Categoria> getCategorie() {
+        return categorie;
     }
 }

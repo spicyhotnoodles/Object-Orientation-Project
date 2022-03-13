@@ -26,12 +26,7 @@
             </constraints>
             <properties/>
             <border type="none"/>
-            <children>
-              <component id="afd80" class="javax.swing.JTree" binding="categoriaTree">
-                <constraints/>
-                <properties/>
-              </component>
-            </children>
+            <children/>
           </scrollpane>
           <component id="7540a" class="javax.swing.JButton" binding="creaCategoriaButton">
             <constraints>

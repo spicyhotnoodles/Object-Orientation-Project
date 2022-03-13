@@ -3,10 +3,7 @@ package DAOImplementations;
 import DAO.RiferimentoDAO;
 import DBEntities.*;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -14,20 +11,21 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
 
     private Connection connection;
     private String[] ottieniRiferimenti;
+    private PreparedStatement eliminaRiferimento;
 
     public RiferimentoDAOPostgre(Connection connection) throws SQLException {
         this.connection = connection;
         ottieniRiferimenti = new String[10];
-        ottieniRiferimenti[0] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, tipo, isbn, pagine, serie, volume from riferimento as r inner join libro as l on r.riferimento_id = l.riferimento_id"; //ottieni libri
-        ottieniRiferimenti[1] =  "select rif.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), issn, pagine, fascicolo from riferimento as rif inner join rivista as riv on rif.riferimento_id = riv.riferimento_id"; //ottieni riviste
-        ottieniRiferimenti[2] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), doi, luogo from riferimento as r inner join convegno as c on r.riferimento_id = c.riferimento_id"; //ottieni convegni
-        ottieniRiferimenti[3] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), isan, genere, distribuzione from riferimento as r inner join film as f on r.riferimento_id = f.riferimento_id"; //ottieni film
-        ottieniRiferimenti[4] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), issn, testata, sezione from riferimento as r inner join giornale as g on r.riferimento_id = g.riferimento_id"; //ottieni giornali
-        ottieniRiferimenti[5] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), doi, episodio, serie from riferimento as r inner join podcast as p on r.riferimento_id = p.riferimento_id"; //ottieni podcast
-        ottieniRiferimenti[6] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), doi, mezzo, ospiti from riferimento as r inner join intervista as i on r.riferimento_id = i.riferimento_id"; //ottieni interviste
-        ottieniRiferimenti[7] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), doi, tipo, ateneo from riferimento as r inner join tesi as t on r.riferimento_id = t.riferimento_id"; //ottieni tesi
-        ottieniRiferimenti[8] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), numero, tipo_legge, codice from riferimento as r inner join legge as l on r.riferimento_id = l.riferimento_id"; //ottieni leggi
-        ottieniRiferimenti[9] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, note, cast(tipo as varchar), url, sito, tipo_sito from riferimento as r inner join web as w on r.riferimento_id = w.riferimento_id"; //ottieni web
+        ottieniRiferimenti[0] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, tipo, isbn, pagine, serie, volume from riferimento as r inner join libro as l on r.riferimento_id = l.riferimento_id"; //ottieni libri
+        ottieniRiferimenti[1] =  "select rif.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), issn, pagine, fascicolo from riferimento as rif inner join rivista as riv on rif.riferimento_id = riv.riferimento_id"; //ottieni riviste
+        ottieniRiferimenti[2] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, luogo from riferimento as r inner join convegno as c on r.riferimento_id = c.riferimento_id"; //ottieni convegni
+        ottieniRiferimenti[3] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), isan, genere, distribuzione from riferimento as r inner join film as f on r.riferimento_id = f.riferimento_id"; //ottieni film
+        ottieniRiferimenti[4] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), issn, testata, sezione from riferimento as r inner join giornale as g on r.riferimento_id = g.riferimento_id"; //ottieni giornali
+        ottieniRiferimenti[5] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, episodio, serie from riferimento as r inner join podcast as p on r.riferimento_id = p.riferimento_id"; //ottieni podcast
+        ottieniRiferimenti[6] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, mezzo, ospiti from riferimento as r inner join intervista as i on r.riferimento_id = i.riferimento_id"; //ottieni interviste
+        ottieniRiferimenti[7] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, tipo, ateneo from riferimento as r inner join tesi as t on r.riferimento_id = t.riferimento_id"; //ottieni tesi
+        ottieniRiferimenti[8] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), numero, tipo_legge, codice from riferimento as r inner join legge as l on r.riferimento_id = l.riferimento_id"; //ottieni leggi
+        ottieniRiferimenti[9] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), url, sito, tipo_sito from riferimento as r inner join web as w on r.riferimento_id = w.riferimento_id"; //ottieni web
     }
 
     @Override
@@ -36,6 +34,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
         ArrayList<String> autori = new ArrayList<String>();
         ArrayList<Riferimento> rimandi = new ArrayList<Riferimento>();
         ArrayList<String> tags = new ArrayList<String>();
+        ArrayList<Categoria> categorie = new ArrayList<>();
         try {
             ResultSet libri;
             ResultSet riviste;
@@ -54,6 +53,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                     autori = estraiLista(libri.getString("autori"));
                     rimandi = ottieniRimandiRiferimento(libri.getString("riferimento_id"));
                     tags = ottieniTagsRiferimento(libri.getString("riferimento_id"));
+                    categorie = ottieniCategorieRiferimento(libri.getString("riferimento_id"));
                     Libro l = Libro.builder()
                             .codice(libri.getString("riferimento_id"))
                             .titolo(libri.getString("titolo"))
@@ -61,10 +61,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(libri.getString("data_pub"))
                             .descrizione(libri.getString("descrizione"))
                             .lingua(libri.getString("lingua"))
-                            .note(libri.getString("note"))
-                            .tipo(libri.getString("tipo"))
+                            .tipo("Libro")
                             .rimandi(rimandi)
                             .tags(tags)
+                            .categorie(categorie)
                             .isbn(libri.getString("isbn"))
                             .pagine(libri.getString("pagine"))
                             .serie(libri.getString("serie"))
@@ -88,7 +88,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(riviste.getString("data_pub"))
                             .descrizione(riviste.getString("descrizione"))
                             .lingua(riviste.getString("lingua"))
-                            .note(riviste.getString("note"))
                             .tipo(riviste.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -114,7 +113,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(convegni.getString("data_pub"))
                             .descrizione(convegni.getString("descrizione"))
                             .lingua(convegni.getString("lingua"))
-                            .note(convegni.getString("note"))
                             .tipo(convegni.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -139,7 +137,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(film.getString("data_pub"))
                             .descrizione(film.getString("descrizione"))
                             .lingua(film.getString("lingua"))
-                            .note(film.getString("note"))
                             .tipo(film.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -165,7 +162,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(giornali.getString("data_pub"))
                             .descrizione(giornali.getString("descrizione"))
                             .lingua(giornali.getString("lingua"))
-                            .note(giornali.getString("note"))
                             .tipo(giornali.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -191,7 +187,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(podcast.getString("data_pub"))
                             .descrizione(podcast.getString("descrizione"))
                             .lingua(podcast.getString("lingua"))
-                            .note(podcast.getString("note"))
                             .tipo(podcast.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -219,7 +214,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(interviste.getString("data_pub"))
                             .descrizione(interviste.getString("descrizione"))
                             .lingua(interviste.getString("lingua"))
-                            .note(interviste.getString("note"))
                             .tipo(interviste.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -245,7 +239,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(tesi.getString("data_pub"))
                             .descrizione(tesi.getString("descrizione"))
                             .lingua(tesi.getString("lingua"))
-                            .note(tesi.getString("note"))
                             .tipo(tesi.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -271,7 +264,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(leggi.getString("data_pub"))
                             .descrizione(leggi.getString("descrizione"))
                             .lingua(leggi.getString("lingua"))
-                            .note(leggi.getString("note"))
                             .tipo(leggi.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -297,7 +289,6 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .data(web.getString("data_pub"))
                             .descrizione(web.getString("descrizione"))
                             .lingua(web.getString("lingua"))
-                            .note(web.getString("note"))
                             .tipo(web.getString("tipo"))
                             .rimandi(rimandi)
                             .tags(tags)
@@ -347,14 +338,31 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
         } catch (SQLException e) {
             System.out.println("Selezione fallita! Selezione di un oggetto di tipo riferimento (citazione) fallita:\n" + e);
         }
-        /*
-        Seleziona tutti i rimandi che matchano il riferimento_id passato come parametro
-        Chiama la funzione estraiElenco per ottenere una lista di stringhe
-        Ritorna la lista
-        LA STESSA COSA VA FATTA PER I TAG
-         */
         return rimandi;
     }
+
+    public ArrayList<Categoria> ottieniCategorieRiferimento(String riferimento_id) throws SQLException {
+        ArrayList<Categoria> categorie = new ArrayList<>();
+        PreparedStatement ps = connection.prepareStatement("select * from categoria where categoria_id in (select categoria_id from catalogo where riferimento_id = cast(? as int))");
+        ps.setString(1, riferimento_id);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Categoria c = new Categoria.Builder()
+                    .setCodice(rs.getString("categoria_id"))
+                    .setNome(rs.getString("nome"))
+                    .setPadre(rs.getString("supercategoria_id"))
+                    .build();
+            categorie.add(c);
+        }
+        return categorie;
+    }
+
+    public void eliminaRiferimento(String id) throws SQLException {
+        eliminaRiferimento = connection.prepareStatement("delete from riferimento where riferimento_id = cast(? as int)");
+        eliminaRiferimento.setString(1, id);
+        eliminaRiferimento.executeUpdate();
+    }
+
 
     public ArrayList<String> estraiLista(String str) {
         Stack<Integer> dels = new Stack<Integer>();

@@ -2,7 +2,9 @@ package GUI;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.TreeModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import DBEntities.*;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
@@ -26,7 +29,6 @@ public class FinestraPrincipale extends JFrame {
     //elementi del pannello tag:
     private JList tagList; //lista delle parole chiave definite dall'utente
     private JLabel tagLabel; //JLabel "Parole chiave"
-    private JTree categoriaTree; //albero che lista tutte le categorie definite dall'utente
     private JButton creaCategoriaButton;
     private JButton eliminaCategoriaButton;
     private JTextField cercaCategoriaTextField;
@@ -150,10 +152,14 @@ public class FinestraPrincipale extends JFrame {
     private JLabel tipoLeggeLabel;
     private JComboBox tipoLeggeComboBox;
     private JButton chiudiButton;
+    private JTree categoriaTree;
     private DefaultListModel listaAutoriDLModel = new DefaultListModel<String>();
     private DefaultListModel listaTagDLModel = new DefaultListModel<String>();
     private DefaultListModel listaRimandiDLModel = new DefaultListModel<String>();
     private DefaultListModel listaOspitiDLModel = new DefaultListModel<String>();
+    private DefaultMutableTreeNode root;
+
+    //categoryScrollPane.setViewportView(categoriaTree);
 
 
     //Lista icone per i pulsanti:
@@ -212,17 +218,15 @@ public class FinestraPrincipale extends JFrame {
         autoreList.setModel(listaAutoriDLModel);
         tagRiferimentoList.setModel(listaTagDLModel);
         rimandiList.setModel(listaRimandiDLModel);
+        root = new DefaultMutableTreeNode("Categorie");
+        categoriaTree = new JTree(root);
+        categoryScrollPane.setViewportView(categoriaTree);
+        aggiungiCategorie(root);
         //oscura tutti gli attributi
         tabbedPane.setVisible(false);
         riferimenti = theController.ottieniRiferimenti();
         riempiTabella(riferimenti);
         //action listners:
-        creaCategoriaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-
-            }
-        });
         //action listner per la combobox del tipo di riferimento
         tipoRiferimentoComboBox.addActionListener(new ActionListener() {
             @Override
@@ -307,7 +311,6 @@ public class FinestraPrincipale extends JFrame {
                     serieTextField.setText(libro.getSerie());
                     numeroPagineTextField.setText(libro.getPagine());
                     volumeTextField.setText(libro.getVolume());
-                    notesTextArea.setText(libro.getNote());
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Rivista) {
                     Rivista rivista = (Rivista) riferimenti.get(riferimentiTable.getSelectedRow());
@@ -503,38 +506,7 @@ public class FinestraPrincipale extends JFrame {
         chiudiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                tabbedPane.setVisible(false);
-                titoloRiferimentoTextField.setText("");
-                descrizioneRiferimentoTextArea.setText("");
-                listaAutoriDLModel.clear();
-                dataTextField.setText("");
-                linguaTextField.setText("");
-                issnTextField.setText("");
-                issnTextField.setText("");
-                doiTextField.setText("");
-                isanTextField.setText("");
-                numeroLeggeTextField.setText("");
-                serieTextField.setText("");
-                numeroPagineTextField.setText("");
-                volumeTextField.setText("");
-                nomeSitoWebTextField.setText("");
-                tipoLeggeComboBox.setSelectedIndex(0);
-                tipoSitoWebTextField.setText("");
-                numeroFascicoloTextField.setText("");
-                luogoConvegnoTextField.setText("");
-                testataGiornaletextField.setText("");
-                sezioneTextField.setText("");
-                tipoTesiTextField.setText("");
-                nomeUniversitàTextField.setText("");
-                codiceLeggeTextField.setText("");
-                numeroEpisodioPodcastTextField.setText("");
-                distribuzioneFilmTextField.setText("");
-                mezzoDistribuzioneIntervistaTextField.setText("");
-                genereFilmTextField.setText("");
-                urlTextField.setText("");
-                notesTextArea.setText("");
-                listaTagDLModel.clear();
-                listaRimandiDLModel.clear();
+                pulisciCampi();
             }
         });
         aggiungiRiferimentoButton.addActionListener(new ActionListener() {
@@ -617,14 +589,35 @@ public class FinestraPrincipale extends JFrame {
                     int input;
                     input = JOptionPane.showConfirmDialog(mainPanel, "Sei sicuro di voler eliminare il riferimento \"" + riferimenti.get(riferimentiTable.getSelectedRow()).getTitolo() + "\"?");
                     if (input == JOptionPane.YES_OPTION)
-                        //JOptionPane.showMessageDialog(mainPanel, "Allora lo eliminerlò quando avrai implementato questa funzionalità");
                         if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Libro) {
                             try {
-                                c.eliminaLibro(riferimenti.get(riferimentiTable.getSelectedRow()).getCodice());
+                                c.eliminaRiferimento(riferimenti.get(riferimentiTable.getSelectedRow()).getCodice());
+                                riferimenti.remove(riferimentiTable.getSelectedRow());
+                                ((DefaultTableModel) riferimentiTable.getModel()).removeRow(riferimentiTable.getSelectedRow());
+                                pulisciCampi();
+                                JOptionPane.showMessageDialog(mainPanel, "Riferimento eliminato", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
                             } catch (SQLException e) {
-                                System.out.println("Eliminazione del libro fallita!\n" + e);
+                                JOptionPane.showMessageDialog(mainPanel, "Eliminazione fallita! Info:\n" + e, "Errore!", JOptionPane.ERROR_MESSAGE);
                             }
                         }
+                }
+            }
+        });
+        creaCategoriaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String s = JOptionPane.showInputDialog("Inserisci il nome della categoria");
+                if (s.equals(""))
+                    JOptionPane.showMessageDialog(mainPanel, "Specificare un nome per la categoria!", "Errore!", JOptionPane.ERROR_MESSAGE);
+                else {
+                    try {
+                        DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) categoriaTree.getSelectionPath().getLastPathComponent();
+                        creaNuovaCategoria(s, nodo);
+                    } catch (NullPointerException e) {
+                        JOptionPane.showMessageDialog(mainPanel, "Per inserire una nuova categoria, selezionare prima un elemento dalla lista", "Errore!", JOptionPane.ERROR_MESSAGE);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -839,4 +832,80 @@ public class FinestraPrincipale extends JFrame {
             model.addRow(new Object[]{r.getTitolo(), r.getTipo(), r.getData(), r.getLingua()});
         }
     }
+
+    public void pulisciCampi() {
+        tabbedPane.setVisible(false);
+        titoloRiferimentoTextField.setText("");
+        descrizioneRiferimentoTextArea.setText("");
+        listaAutoriDLModel.clear();
+        dataTextField.setText("");
+        linguaTextField.setText("");
+        issnTextField.setText("");
+        issnTextField.setText("");
+        doiTextField.setText("");
+        isanTextField.setText("");
+        numeroLeggeTextField.setText("");
+        serieTextField.setText("");
+        numeroPagineTextField.setText("");
+        volumeTextField.setText("");
+        nomeSitoWebTextField.setText("");
+        tipoLeggeComboBox.setSelectedIndex(0);
+        tipoSitoWebTextField.setText("");
+        numeroFascicoloTextField.setText("");
+        luogoConvegnoTextField.setText("");
+        testataGiornaletextField.setText("");
+        sezioneTextField.setText("");
+        tipoTesiTextField.setText("");
+        nomeUniversitàTextField.setText("");
+        codiceLeggeTextField.setText("");
+        numeroEpisodioPodcastTextField.setText("");
+        distribuzioneFilmTextField.setText("");
+        mezzoDistribuzioneIntervistaTextField.setText("");
+        genereFilmTextField.setText("");
+        urlTextField.setText("");
+        notesTextArea.setText("");
+        listaTagDLModel.clear();
+        listaRimandiDLModel.clear();
+    }
+
+    public void creaNuovaCategoria(String s, DefaultMutableTreeNode n) throws SQLException {
+        DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(s);
+        n.add(nodo);
+        Categoria categoria = new Categoria.Builder()
+                .setNome(s)
+                .setPadre(n.toString())
+                .build();
+        //theController.creaCategoria(categoria);
+        ((DefaultTreeModel) categoriaTree.getModel()).reload();
+    }
+
+    public void aggiungiCategorie(DefaultMutableTreeNode root) throws SQLException {
+        ArrayList<Categoria> categorie = theController.ottieniCategorie();
+        for (Categoria cat: categorie) {
+            if (cat.getPadre().equals("")) {
+                DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(cat.getNome());
+                root.add(nodo);
+            }
+        }
+        for (Categoria cat: categorie) {
+            if (!cat.getPadre().equals("")){
+                DefaultMutableTreeNode padre = trovaNodo(root, cat.getPadre());
+                DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(cat.getNome());
+                padre.add(nodo);
+            }
+        }
+    }
+
+    public DefaultMutableTreeNode trovaNodo(DefaultMutableTreeNode root, String s) {
+        @SuppressWarnings("unchecked")
+        Enumeration<TreeNode> e = root.depthFirstEnumeration();
+        while (e.hasMoreElements()) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+            if (node.toString().equalsIgnoreCase(s)) {
+                return (node);
+            }
+        }
+        return null;
+    }
+
 }

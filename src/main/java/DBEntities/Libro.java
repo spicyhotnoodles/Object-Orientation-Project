@@ -54,17 +54,6 @@ public class Libro extends Riferimento {
         }
     }
 
-    /*@Override
-    public String toString() {
-        return "Libro{" +
-                super.toString() + '\'' +
-                "pagine='" + pagine + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", serie='" + serie + '\'' +
-                ", volume='" + volume + '\'' +
-                '}';
-    }*/
-
     @Override
     public String toString() {
         return "Libro{ " +
@@ -75,7 +64,6 @@ public class Libro extends Riferimento {
                 ", data='" + super.getData() + '\'' +
                 ", lingua='" + super.getLingua() + '\'' +
                 ", tipo='" + super.getTipo() + '\'' +
-                ", note='" + super.getNote() + '\'' +
                 ", categorie=" + super.getCategorie() + '\'' +
                 ", tags= " + super.getTags() + '\'' +
                 ", rimandi= " + super.getRimandi() + '\'' +
@@ -102,4 +90,19 @@ public class Libro extends Riferimento {
         return volume;
     }
 
+    public void setPagine(String pagine) {
+        this.pagine = pagine;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void setSerie(String serie) {
+        this.serie = serie;
+    }
+
+    public void setVolume(String volume) {
+        this.volume = volume;
+    }
 }

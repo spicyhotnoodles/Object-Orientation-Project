@@ -76,7 +76,7 @@ create table libro (
     serie varchar(200),
     volume varchar(200),
     riferimento_id int,
-    constraint riferimento_libro foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_libro foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table rivista (
@@ -84,14 +84,14 @@ create table rivista (
     pagine varchar(50),
     fascicolo varchar(50),
     riferimento_id int,
-    constraint riferimento_rivista foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_rivista foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table convegno (
 	doi varchar(20) primary key,
     luogo varchar(200),
 	riferimento_id int,
-    constraint riferimento_convegno foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_convegno foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table giornale (
@@ -99,7 +99,7 @@ create table giornale (
     testata varchar(50),
     sezione varchar(200),
     riferimento_id int,
-    constraint riferimento_giornale foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_giornale foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table tesi (
@@ -107,7 +107,7 @@ create table tesi (
     tipo_tesi varchar(200),
     ateneo varchar(200),
     riferimento_id int,
-    constraint riferimento_tesi foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_tesi foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table web (
@@ -115,7 +115,7 @@ create table web (
     sito varchar(200),
     tipo_sito varchar(200),
     riferimento_id int,
-    constraint riferimento_web foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_web foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table film (
@@ -123,7 +123,7 @@ create table film (
     genere varchar(200),
     distribuzione varchar(200),
     riferimento_id int,
-    constraint riferimento_film foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_film foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
     
 )
 
@@ -132,7 +132,7 @@ create table intervista (
     mezzo varchar(200),
     ospiti varchar(500),
     riferimento_id int,
-    constraint riferimento_intervista foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_intervista foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table legge (
@@ -140,7 +140,7 @@ create table legge (
     tipo_legge varchar(30),
     codice varchar(200),
     riferimento_id int,
-    constraint riferimento_legge foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_legge foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table podcast (
@@ -148,7 +148,7 @@ create table podcast (
     episodio varchar(200),
     serie varchar(200),
     riferimento_id int,
-    constraint riferimento_podcast foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_podcast foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 -- La tabella `citazione` codifica la relazione * a * riflessiva. L'attributo `citazione.riferimento` indica il riferimento citante mentre `citazione.menzionato` indica il riferimento citato. 
@@ -157,23 +157,22 @@ create table citazione (
     id_citazione serial primary key,
     menzionato_id int,
     riferimento_id int,
-    constraint riferito foreign key (menzionato_id) references Riferimento(riferimento_id),
-    constraint referente foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint citato foreign key (menzionato_id) references Riferimento(riferimento_id),
+    constraint citante foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 create table tag (
 	id_tag serial primary key,
     parola varchar(15) unique,
     riferimento_id int,
-    constraint riferimento_tags foreign key (riferimento_id) references Riferimento(riferimento_id)
+    constraint riferimento_tags foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
 -- La tabella `categoria` contiene tutte le categorie create dall'utente
 
 create table categoria (
     id_categoria serial primary key,
-    nome varchar(100) unique,
-    descrizione varchar(2000)
+    nome varchar(100) unique
 )
 
 -- La tabella `catalogo` codifica la relazione * a * tra `riferimento` e `categoria`. Consente di risalire alla categoria di ciascun riferimento, oppure di verificare quali riferimenti appartengono ad una data categoria.
@@ -183,19 +182,25 @@ create table catalogo (
     riferimento_id int,
     categoria_id int,
     -- Vincoli interrelazionali
-    constraint riferimento foreign key (riferimento_id) references Riferimento(riferimento_id),
-    constraint categoria foreign key (categoria_id) references Categoria(categoria_id)
+    constraint riferimento foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade,
+    constraint categoria foreign key (categoria_id) references Categoria(categoria_id) on delete cascade
 )
 
 -- La tabella `sottocategoria` indica le possibili sottocategorie di una supercategoria. Poiché potenzialmente una supercategoria potrebbe avere più di una sottocategoria, è inclusa una chiave esterna `supercategoria` che consente di risalire a tutte le sottocategorie di una supercategoria.
 
 create table sottocategoria (
-    id_sottocategoria serial primary key,
+    id_sottocategoria int,
     nome varchar(100),
-    descrizione varchar(1000),
-    supercategoria varchar(100),
+    padre_id varchar(100),
     -- Vincoli interrelazionali
-    constraint categoria_padre foreign key (supercategoria) references Categoria(id_categoria)
+    constraint categoria_padre foreign key (supercategoria) references Categoria(categoria_id) on delete cascade
+)
+
+create table categoria (
+	id_categoria serial primary key,
+	nome varchar(50),
+	id_supercategoria int,
+	constraint gerarchia foreign key (id_supercategoria) references categoria (id_categoria)
 )
 
 ```

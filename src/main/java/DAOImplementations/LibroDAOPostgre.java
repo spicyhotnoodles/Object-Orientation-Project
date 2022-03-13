@@ -17,23 +17,19 @@ public class LibroDAOPostgre implements LibroDAO {
     private Connection connection;
     private String[] inserisciLibro;
     private String[] modificaLibro;
-    private String[] eliminaLibro;
 
     public LibroDAOPostgre(Connection connection) throws SQLException {
         this.connection = connection;
         inserisciLibro = new String[6];
         modificaLibro = new String[2];
-        eliminaLibro = new String[2];
-        inserisciLibro[0] = "insert into riferimento values (default, ?, ?, ?, ?, ?, ?, cast(? as tipologia));";
+        inserisciLibro[0] = "insert into riferimento values (default, ?, ?, ?, ?, ?, cast(? as tipologia));";
         inserisciLibro[1] = "select currval('riferimento_id_riferimento_seq');";
         inserisciLibro[2] = "insert into libro values (?, ?, ?, ?, ?)";
         inserisciLibro[3] = "insert into catalogo values (default, ?, ?);";
         inserisciLibro[4] = "insert into citazione values (default, ?. ?);";
         inserisciLibro[5] = "insert into tags values (default, ?, ?);";
-        modificaLibro[0] = "update riferimento set titolo=?, autori=?, data_pub=?, descrizione=?, lingua=?, note=? where riferimento_id = cast(? as int);";
-        modificaLibro[1] = "update libro set isbn=?, num_pagine=?, serie=?, volume=? where riferimento_id = cast(? as int);";
-        eliminaLibro[0] = "delete from riferimento where riferimento_id = ?";
-        eliminaLibro[1] = "delete from libro where riferimento_id = ?";
+        modificaLibro[0] = "update riferimento set titolo=?, autori=?, data_pub=?, descrizione=?, lingua=? where riferimento_id = cast(? as int);";
+        modificaLibro[1] = "update libro set isbn=?, pagine=?, serie=?, volume=? where riferimento_id = cast(? as int);";
     }
 
     @Override
@@ -49,8 +45,7 @@ public class LibroDAOPostgre implements LibroDAO {
             ps.setString(3, libro.getData());
             ps.setString(4, libro.getDescrizione());
             ps.setString(5, libro.getLingua());
-            ps.setString(6, libro.getNote());
-            ps.setString(7, libro.getTipo());
+            ps.setString(6, "libro");
             ps.executeUpdate();
             try {
                 Statement st = connection.createStatement();
@@ -124,8 +119,7 @@ public class LibroDAOPostgre implements LibroDAO {
             ps.setString(3, libro.getData());
             ps.setString(4, libro.getDescrizione());
             ps.setString(5, libro.getLingua());
-            ps.setString(6, libro.getNote());
-            ps.setString(7, libro.getCodice());
+            ps.setString(6, libro.getCodice());
             ps.executeUpdate();
             try {
                 ps = connection.prepareStatement(modificaLibro[1]);
@@ -157,7 +151,7 @@ public class LibroDAOPostgre implements LibroDAO {
                             ps.setString(2, libro.getCodice());
                             ps.executeUpdate();
                         }
-                    } catch(SQLException e) {
+                    } catch (SQLException e) {
                         System.out.println("Modifica fallita! Aggiornamento di un oggetto catalogo (libro) fallito:\n" + e);
                     }
                 } else {
@@ -197,24 +191,4 @@ public class LibroDAOPostgre implements LibroDAO {
         }
         return 0;
     }
-
-    @Override
-    public void eliminaLibro(String id) throws SQLException {
-        try {
-            connection.setAutoCommit(false);
-            PreparedStatement ps = connection.prepareStatement(eliminaLibro[0]);
-            ps.setString(1, id);
-            ps.executeUpdate();
-            try {
-                ps = connection.prepareStatement(eliminaLibro[1]);
-                ps.setString(1, id);
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println("Transazione interrotta! Seconda operazione di eliminazione fallita:\n" + e);
-            }
-        } catch (SQLException e) {
-            System.out.println("Transazione interrotta! Prima operazione di eliminazione fallita:\n" + e);
-        }
-    }
-
 }

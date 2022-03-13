@@ -31,8 +31,7 @@ public class WebDAOPostgre implements WebDAO {
             ps.setString(3, web.getData());
             ps.setString(4, web.getDescrizione());
             ps.setString(5, web.getLingua());
-            ps.setString(6, web.getNote());
-            ps.setString(7, web.getTipo());
+            ps.setString(6, web.getTipo());
             ps.executeUpdate();
             try {
                 Statement st = connection.createStatement();

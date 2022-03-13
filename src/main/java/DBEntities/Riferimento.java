@@ -11,7 +11,6 @@ public class Riferimento {
     private String data;
     private String lingua;
     private String tipo;
-    private String note;
     private List<Categoria> categorie;
     private List<String> tags;
     private List<Riferimento> rimandi;
@@ -24,7 +23,6 @@ public class Riferimento {
         data = builder.data;
         lingua = builder.lingua;
         tipo = builder.tipo;
-        note = builder.note;
         categorie = builder.categorie;
         tags = builder.tags;
         rimandi = builder.rimandi;
@@ -47,7 +45,6 @@ public class Riferimento {
         private String data;
         private String lingua;
         private String tipo;
-        private String note;
         private List<Categoria> categorie;
         private List<String> tags;
         private List<Riferimento> rimandi;
@@ -81,11 +78,6 @@ public class Riferimento {
 
         public T tipo(String tipo) {
             this.tipo = tipo;
-            return this.getThis();
-        }
-
-        public T note(String note) {
-            this.note = note;
             return this.getThis();
         }
 
@@ -125,7 +117,6 @@ public class Riferimento {
                 ", data='" + data + '\'' +
                 ", lingua='" + lingua + '\'' +
                 ", tipo='" + tipo + '\'' +
-                ", note='" + note + '\'' +
                 ", categorie=" + categorie +
                 ", tags=" + tags +
                 ", rimandi=" + rimandi +
@@ -150,10 +141,6 @@ public class Riferimento {
 
     public String getTipo() {
         return tipo;
-    }
-
-    public String getNote() {
-        return note;
     }
 
     public List<Categoria> getCategorie() { return categorie; }
@@ -190,10 +177,6 @@ public class Riferimento {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 
     public void setCategorie(List<Categoria> categorie) {

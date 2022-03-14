@@ -84,39 +84,41 @@ public class FrameGestioneRiferimento extends JFrame {
     }
 
     public void mostraRiferimento(Riferimento riferimento, FrameTabellaRiferimenti frame) {
-        //ArrayList<Categoria> categorieRiferimento = new ArrayList<>();
-        for (String tag: riferimento.getTags())
-            tagDLM.addElement(tag);
-        for (Categoria cat: riferimento.getCategorie()) {
-
-            categoriaDLM.addElement(cat.getNome());
-        }
-        for (Riferimento rif: riferimento.getRimandi())
-            rimandiDLM.addElement(rif.getTitolo());
+        riempiListaCategorieRiferimento(riferimento);
+        riempiListaRimandiRiferimento(riferimento);
+        riempiListaTagRiferimento(riferimento);
         rimuoviCategoriaRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    c.rimuoviDalCatalogo(riferimento.getCategorie().get(categoriaRifList.getSelectedIndex()).getCodice());
-                    riferimento.getCategorie().remove(categoriaRifList.getSelectedIndex());
-                    categoriaDLM.remove(categoriaRifList.getSelectedIndex());
-                    JOptionPane.showMessageDialog(mainPanel, "Riferimento rimosso dalla seguente categoria", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                for (Categoria cat: categorie) {
+                    if (cat.getNome().equals(categoriaRifList.getSelectedValue().toString())) {
+                        try {
+                            c.rimuoviDalCatalogo(riferimento.getCodice(), cat.getCodice());
+                            JOptionPane.showMessageDialog(mainPanel, "Il riferimento è stato rimosso dalla categoria selezionata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                            categorie.remove(cat);
+                            categoriaDLM.removeElement(categoriaRifList.getSelectedValue().toString());
+
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
             }
         });
         aggiungiCatRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println(categorie.get(aggiungiCategoriaComboBox.getSelectedIndex()).toString());
-                try {
-                    c.aggiungiAlCatalogo(riferimento.getCodice(), categorie.get(aggiungiCategoriaComboBox.getSelectedIndex()).getCodice());
-                    riferimento.getCategorie().add(categorie.get(aggiungiCategoriaComboBox.getSelectedIndex()));
-                    categoriaDLM.addElement(categorie.get(aggiungiCategoriaComboBox.getSelectedIndex()).getNome());
-                    JOptionPane.showMessageDialog(mainPanel, "Riferimento aggiunto alla seguente categoria", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                for (Categoria cat: categorie) {
+                    if (cat.getNome().equals(aggiungiCategoriaComboBox.getSelectedItem().toString())) {
+                        try {
+                            c.aggiungiAlCatalogo(riferimento.getCodice(), cat.getCodice());
+                            JOptionPane.showMessageDialog(mainPanel, "Il riferimento è stato assegnato alla categoria selezionata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                            categoriaDLM.addElement(aggiungiCategoriaComboBox.getSelectedItem().toString());
+
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
             }
         });
@@ -125,8 +127,8 @@ public class FrameGestioneRiferimento extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 String s = autoriTextField.getText();
                 ArrayList<String> nuoviAutori = new ArrayList<>(Arrays.asList(s.split(";")));
-                System.out.println(categoriaRifList.getSelectedIndex());
-                System.out.println(categorie.get(categoriaRifList.getSelectedIndex()).toString());
+                //System.out.println(categoriaRifList.getSelectedValue().toString());
+
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Libro")) {
                     Libro l = (Libro) riferimento;
                     l.setTitolo(titoloTextField.getText());
@@ -241,5 +243,20 @@ public class FrameGestioneRiferimento extends JFrame {
                 }
             }
         });
+    }
+
+    public void riempiListaTagRiferimento(Riferimento riferimento) {
+        for (String tag : riferimento.getTags())
+            tagDLM.addElement(tag);
+    }
+
+    public void riempiListaCategorieRiferimento(Riferimento riferimento) {
+        for (Categoria cat : riferimento.getCategorie())
+            categoriaDLM.addElement(cat.getNome());
+    }
+
+    public void riempiListaRimandiRiferimento(Riferimento riferimento) {
+        for (Riferimento rif: riferimento.getRimandi())
+            rimandiDLM.addElement(rif.getTitolo());
     }
 }

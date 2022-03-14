@@ -13,14 +13,14 @@ public class CategoriaDAOPostgre implements CategoriaDAO {
     PreparedStatement creaCategoria;
     Statement ottieniCategorie;
     PreparedStatement eliminaCategoria;
-    PreparedStatement rimuoviDalCatalogo;
 
     public CategoriaDAOPostgre(Connection connection) {
         this.connection=connection;
     }
 
     @Override
-    public void creaCategoria(Categoria categoria) throws SQLException {
+    public String creaCategoria(Categoria categoria) throws SQLException {
+        String id = "";
         creaCategoria = connection.prepareStatement("insert into categoria values (default, ?, ?)");
         creaCategoria.setString(1, categoria.getNome());
         if (categoria.getPadre().equals(""))
@@ -33,11 +33,16 @@ public class CategoriaDAOPostgre implements CategoriaDAO {
                 creaCategoria.setInt(2, padre.getInt("categoria_id"));
         }
         creaCategoria.executeUpdate();
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery("select currval('categoria_id_categoria_seq')");
+        if (rs.next())
+            id = rs.getString("currval");
+        return id;
     }
 
     @Override
     public void eliminaCategoria(String id) throws SQLException {
-        eliminaCategoria = connection.prepareStatement("delete from categoria where categoria_id = ?");
+        eliminaCategoria = connection.prepareStatement("delete from categoria where categoria_id = cast(? as int)");
         eliminaCategoria.setString(1, id);
         eliminaCategoria.executeUpdate();
     }
@@ -57,42 +62,4 @@ public class CategoriaDAOPostgre implements CategoriaDAO {
         }
         return categorie;
     }
-
-    /*@Override
-    public ArrayList<Categoria> ottieniCategorie() throws SQLException {
-        ArrayList<Categoria> categorie = new ArrayList<>();
-        ottieniCategorie[0] = "select cast(c.categoria_id as varchar), c.nome, cast(s.padre_id as varchar) from categoria as c left outer join sottocategoria as s on c.categoria_id = s.id_sottocategoria"; //ottieni categorie
-        ottieniCategorie[1] = "select cast(c.categoria_id as varchar), nome, cast(padre_id as varchar) from categoria as c left outer join sottocategoria as s on c.categoria_id = s.id_sottocategoria where categoria_id = cast(? as int)";
-        Statement st = connection.createStatement();
-        ResultSet categoria = st.executeQuery(ottieniCategorie[0]);
-        while (categoria.next()) {
-            categoria.getString("padre_id");
-            if (categoria.wasNull()) {
-                System.out.println("Non ha un padre");
-                Categoria c = new Categoria.Builder()
-                        .setCodice(categoria.getString("categoria_id"))
-                        .setNome(categoria.getString("nome"))
-                        .setPadre("")
-                        .build();
-                categorie.add(c);
-            }
-            else {
-                System.out.println("Ha un padre");
-                String nomeParent = "";
-                PreparedStatement anchestor = connection.prepareStatement(ottieniCategorie[1]);
-                anchestor.setString(1, categoria.getString("padre_id"));
-                ResultSet padri = anchestor.executeQuery();
-                while (padri.next()) {
-                    nomeParent = padri.getString("nome");
-                }
-                Categoria c = new Categoria.Builder()
-                        .setCodice(categoria.getString("categoria_id"))
-                        .setNome(categoria.getString("nome"))
-                        .setPadre(nomeParent)
-                        .build();
-                categorie.add(c);
-            }
-        }
-        return categorie;
-    }*/
 }

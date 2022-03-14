@@ -27,6 +27,7 @@ public class Controller {
     private LibroDAOPostgre libroDAO;
     private FinestraPrincipale fp;
     private FrameTabellaRiferimenti finestraTabella;
+    private FrameCreaCategoria finestraCategoria;
     private ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
     private ArrayList<String> tags = new ArrayList<>();
     private ArrayList<Categoria> categorie = new ArrayList<>();
@@ -72,24 +73,9 @@ public class Controller {
         return categorie;
     }
 
-    public void eliminaRiferimento(String id) throws SQLException {
-        riferimentoDAO.eliminaRiferimento(id);
-    }
-
-    public void eliminaCategoria(String id) throws SQLException {
-        categoriaDAO.eliminaCategoria(id);
-    }
-
-    public void aggiungiAlCatalogo(String riferimento_id, String categoria_id) throws SQLException {
-        catalogoDAO.aggiungiAlCatalogo(riferimento_id, categoria_id);
-    }
-
-    public void rimuoviDalCatalogo(String id) throws SQLException {
-        catalogoDAO.rimuoviDalCatalogo(id);
-    }
-
-    public void creaCategoria(Categoria categoria) throws SQLException {
-        categoriaDAO.creaCategoria(categoria);
+    public ArrayList<String> ottieniTags() throws SQLException {
+        tags = tagDAO.ottieniTags();
+        return tags;
     }
 
     public void creaRiferimento(Riferimento riferimento) throws SQLException {
@@ -106,6 +92,34 @@ public class Controller {
         }
     }
 
+    public void eliminaRiferimento(String id) throws SQLException {
+        riferimentoDAO.eliminaRiferimento(id);
+    }
+
+    public void aggiungiAlCatalogo(String riferimento_id, String categoria_id) throws SQLException {
+        catalogoDAO.aggiungiAlCatalogo(riferimento_id, categoria_id);
+    }
+
+    public void rimuoviDalCatalogo(String riferimento_id, String categoria_id) throws SQLException {
+        catalogoDAO.rimuoviDalCatalogo(riferimento_id, categoria_id);
+    }
+
+    public void creaCategoria(Categoria categoria) throws SQLException {
+        categoria.setCodice(categoriaDAO.creaCategoria(categoria));
+    }
+
+    public void eliminaCategoria(String id) throws SQLException {
+        categoriaDAO.eliminaCategoria(id);
+    }
+
+    public void creaTag(String tag) throws SQLException {
+        tagDAO.creaTag(tag);
+    }
+
+    public void eliminaTag(String tag) throws SQLException {
+        tagDAO.eliminaTag(tag);
+    }
+
     public void mostraInformazioniRiferimento(Riferimento riferimento) {
         FrameGestioneRiferimento finestraRiferimento = new FrameGestioneRiferimento("Modifica", this);
         finestraRiferimento.setVisible(true);
@@ -118,9 +132,10 @@ public class Controller {
         finestraRiferimento.creaNuovoRiferimento(finestraTabella);
     }
 
-    public ArrayList<String> ottieniTags() throws SQLException {
-        tags = tagDAO.ottieniTags();
-        return tags;
+    public void mostraCreazioneCategoria() throws SQLException {
+        finestraCategoria = new FrameCreaCategoria("Nuova Categoria", this);
+        finestraCategoria.setVisible(true);
+        finestraCategoria.creaCategoria(finestraTabella);
     }
 
     public ArrayList<Riferimento> getRiferimenti() {

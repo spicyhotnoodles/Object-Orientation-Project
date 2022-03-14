@@ -32,9 +32,8 @@ public class FrameTabellaRiferimenti extends JFrame {
     private ArrayList<Riferimento> riferimenti = new ArrayList<>();
     private ArrayList<Categoria> categorie = new ArrayList<>();
     private ArrayList<String> tags = new ArrayList<>();
-    private FrameCreaCategoria frameCreaCategoria;
-    private static DefaultListModel categoriaLM = new DefaultListModel<>();
-    private static DefaultListModel tagLM = new DefaultListModel<>();
+    private DefaultListModel categoriaLM = new DefaultListModel<>();
+    private DefaultListModel tagLM = new DefaultListModel<>();
 
 
     public FrameTabellaRiferimenti(String titolo, Controller c) throws SQLException {
@@ -47,10 +46,8 @@ public class FrameTabellaRiferimenti extends JFrame {
         creaTabellaRiferimenti();
         categoriaList.setModel(categoriaLM);
         tagList.setModel(tagLM);
-        categorie = c.ottieniCategorie();
-        tags = c.ottieniTags();
-        riempiListaCategorie(categorie);
-        riempiListaTags(tags);
+        riempiListaCategorie();
+        riempiListaTags();
         riempiTabella();
         tableRiferimenti.addMouseListener(new MouseAdapter() {
             @Override
@@ -64,12 +61,11 @@ public class FrameTabellaRiferimenti extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    frameCreaCategoria = new FrameCreaCategoria("Crea Categoria", c);
+                    c.mostraCreazioneCategoria();
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                 }
-                frameCreaCategoria.setVisible(true);
-                }
+            }
         });
         ricercaTextField.addKeyListener(new KeyAdapter() {
             @Override
@@ -118,9 +114,9 @@ public class FrameTabellaRiferimenti extends JFrame {
                     JOptionPane.showMessageDialog(mainPanel, "Selezionare l'oggetto da eliminare!", "Errore!", JOptionPane.ERROR_MESSAGE);
                 else {
                     try {
-                        tagList.remove(tagList.getSelectedIndex());
-                        c.eliminaCategoria(categoriaList.getSelectedValue().toString());
+                        c.eliminaCategoria(categorie.get(categoriaList.getSelectedIndex()).getCodice());
                         JOptionPane.showMessageDialog(mainPanel, "Categoria eliminata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                        riempiListaCategorie();
                     } catch (SQLException e) {
                         JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                     }
@@ -149,6 +145,31 @@ public class FrameTabellaRiferimenti extends JFrame {
                 }
             }
         });
+        nuovoTagButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String tag = JOptionPane.showInputDialog(mainPanel, "Inserisci un nuovo tag");
+                try {
+                    c.creaTag(tag);
+                    JOptionPane.showMessageDialog(mainPanel, "Tag creato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    riempiListaTags();
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        eliminaTagButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    c.eliminaTag(tagList.getSelectedValue().toString());
+                    JOptionPane.showMessageDialog(mainPanel, "Tag eliminato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    riempiListaTags();
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     private void creaTabellaRiferimenti() {
@@ -159,6 +180,7 @@ public class FrameTabellaRiferimenti extends JFrame {
     }
 
     public void riempiTabella() {
+        riferimenti.clear();
         riferimenti = c.ottieniRiferimenti();
         DefaultTableModel model = (DefaultTableModel) tableRiferimenti.getModel();
         model.setRowCount(0);
@@ -175,21 +197,22 @@ public class FrameTabellaRiferimenti extends JFrame {
                 tags = tags + r.getTags() + "; ";
             model.addRow(new Object[]{r.getTitolo(), autori, r.getTipo(), r.getData(), r.getLingua(), tags, categorie});
         }
-
     }
 
-    public void riempiListaCategorie(ArrayList<Categoria> categorie) {
+    public void riempiListaCategorie() throws SQLException {
+        categoriaLM.clear();
+        categorie.clear();
+        categorie = c.ottieniCategorie();
         for (Categoria cat: categorie)
             categoriaLM.addElement(cat.getNome());
     }
 
-    public void riempiListaTags(ArrayList<String> tags) {
+    public void riempiListaTags() throws SQLException {
+        tagLM.clear();
+        tags.clear();
+        tags = c.ottieniTags();
         for (String tag: tags) {
             tagLM.addElement(tag);
         }
-    }
-
-    public static DefaultListModel getCategoriaLM() {
-                    return categoriaLM;
     }
 }

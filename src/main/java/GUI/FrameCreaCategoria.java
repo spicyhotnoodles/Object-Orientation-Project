@@ -32,6 +32,9 @@ public class FrameCreaCategoria extends JFrame {
             for (Categoria cat : c.ottieniCategorie())
                 supercategoriaComboBox.addItem(cat.getNome());
         }
+    }
+
+    public void creaCategoria(FrameTabellaRiferimenti frame) {
         sottoCategoriaRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -59,7 +62,7 @@ public class FrameCreaCategoria extends JFrame {
                     try {
                         c.creaCategoria(categoria);
                         JOptionPane.showMessageDialog(mainPanel, "Categoria creata con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                        FrameTabellaRiferimenti.getCategoriaLM().addElement(nome);
+                        frame.riempiListaCategorie();
                         dispose();
                     } catch (SQLException e) {
                         JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);

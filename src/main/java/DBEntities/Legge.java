@@ -3,14 +3,14 @@ package DBEntities;
 public class Legge extends Riferimento {
     private String numero;
     private String tipo;
-    private String codice;
+    private String codiceLegge;
 
 
     protected Legge(Builder builder) {
         super(builder);
         this.numero = builder.numero;
         this.tipo = builder.tipo;
-        this.codice = builder.codice;
+        this.codiceLegge = builder.codiceLegge;
     }
 
     public static Builder build() { return new Builder(); }
@@ -18,7 +18,7 @@ public class Legge extends Riferimento {
     public static class Builder extends Riferimento.Builder<Builder> {
         private String numero;
         private String tipo;
-        private String codice;
+        private String codiceLegge;
 
         @Override
         public Builder getThis() { return this; }
@@ -35,8 +35,8 @@ public class Legge extends Riferimento {
             return this;
         }
 
-        public Builder codice(String codice) {
-            this.codice = codice;
+        public Builder codiceLegge(String codiceLegge) {
+            this.codiceLegge = codiceLegge;
             return this;
         }
     }
@@ -49,23 +49,17 @@ public class Legge extends Riferimento {
         this.numero = numero;
     }
 
-    @Override
-    public String getTipo() {
+    public String getTipoLegge() {
         return tipo;
     }
 
-    @Override
-    public void setTipo(String tipo) {
+    public void setTipoLegge(String tipo) {
         this.tipo = tipo;
     }
 
-    @Override
-    public String getCodice() {
-        return codice;
+    public String getCodiceLegge() {
+        return codiceLegge;
     }
 
-    @Override
-    public void setCodice(String codice) {
-        this.codice = codice;
-    }
+    public void setCodiceLegge(String codiceLegge) { this.codiceLegge = codiceLegge; }
 }

@@ -13,7 +13,8 @@ public class Riferimento {
     private String tipo;
     private List<Categoria> categorie;
     private List<String> tags;
-    private List<Riferimento> rimandi;
+    private List<Riferimento> citazioni;
+    private int rimandi;
 
     protected Riferimento(Builder<?> builder) {
         codice = builder.codice;
@@ -25,6 +26,7 @@ public class Riferimento {
         tipo = builder.tipo;
         categorie = builder.categorie;
         tags = builder.tags;
+        citazioni = builder.citazioni;
         rimandi = builder.rimandi;
     }
 
@@ -38,6 +40,7 @@ public class Riferimento {
     }
 
     public abstract static class Builder<T extends Builder<T>> {
+
         private String codice;
         private String titolo;
         private List<String> autori;
@@ -47,8 +50,8 @@ public class Riferimento {
         private String tipo;
         private List<Categoria> categorie;
         private List<String> tags;
-        private List<Riferimento> rimandi;
-
+        private List<Riferimento> citazioni;
+        private int rimandi;
         public abstract T getThis();
 
         public T titolo(String titolo) {
@@ -96,7 +99,12 @@ public class Riferimento {
             return this.getThis();
         }
 
-        public T rimandi(List<Riferimento> rimandi) {
+        public T citazioni(List<Riferimento> citazioni) {
+            this.citazioni = citazioni;
+            return this.getThis();
+        }
+
+        public T rimandi(int rimandi) {
             this.rimandi = rimandi;
             return this.getThis();
         }
@@ -106,7 +114,6 @@ public class Riferimento {
         }
 
     }
-
     @Override
     public String toString() {
         return "Riferimento{" +
@@ -119,6 +126,7 @@ public class Riferimento {
                 ", tipo='" + tipo + '\'' +
                 ", categorie=" + categorie +
                 ", tags=" + tags +
+                ", citazioni=" + citazioni +
                 ", rimandi=" + rimandi +
                 '}';
     }
@@ -149,7 +157,9 @@ public class Riferimento {
 
     public List<String> getTags() { return tags; }
 
-    public List<Riferimento> getRimandi() { return rimandi; }
+    public List<Riferimento> getCitazioni() { return citazioni; }
+
+    public int getRimandi() { return rimandi; }
 
     public void setCodice(String codice) {
         this.codice = codice;
@@ -175,8 +185,8 @@ public class Riferimento {
         this.lingua = lingua;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setTipoTesi(String tipoTesi) {
+        this.tipo = tipoTesi;
     }
 
     public void setCategorie(List<Categoria> categorie) {
@@ -187,7 +197,9 @@ public class Riferimento {
         this.tags = tags;
     }
 
-    public void setRimandi(List<Riferimento> rimandi) {
-        this.rimandi = rimandi;
+    public void setCitazioni(List<Riferimento> citazioni) {
+        this.citazioni = citazioni;
     }
+
+    public void setRimandi(int rimandi) { this.rimandi = rimandi; }
 }

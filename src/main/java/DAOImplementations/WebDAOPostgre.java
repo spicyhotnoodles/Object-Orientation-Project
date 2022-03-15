@@ -20,7 +20,8 @@ public class WebDAOPostgre implements WebDAO {
     }
 
     @Override
-    public void inserisciWeb(Web web) throws SQLException {
+    public String inserisciWeb(Web web) throws SQLException {
+        String codice = "";
         String s = "";
         s = componiAutori(web.getAutori());
         try {
@@ -37,6 +38,7 @@ public class WebDAOPostgre implements WebDAO {
                 Statement st = connection.createStatement();
                 ResultSet rs = st.executeQuery(inserisciWeb[1]);
                 if (rs.next()) {
+                    codice = rs.getString("currval");
                     ps = connection.prepareStatement(inserisciWeb[2]);
                     ps.setString(1, web.getUrl());
                     ps.setString(2, web.getSito());
@@ -53,6 +55,7 @@ public class WebDAOPostgre implements WebDAO {
             System.out.println("Transazione interrotta! Prima istruzione di inserimento di un oggetto web fallita:\n" + e);
             connection.rollback();
         }
+        return codice;
     }
 
     @Override

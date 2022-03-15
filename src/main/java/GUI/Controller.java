@@ -11,6 +11,9 @@ import DBEntities.*;
 import DAOImplementations.*;
 import DBConfig.DBConnection;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 
 public class Controller {
 
@@ -24,8 +27,16 @@ public class Controller {
     private CitazioneDAOPostgre citazioneDAO;
     private RiferimentoDAOPostgre riferimentoDAO;
     private SottocategoriaDAOPostgre sottocategoriaDAO;
-    private LibroDAOPostgre libroDAO;
-    private FinestraPrincipale fp;
+    private LibroDAOPostgre libroPostgre;
+    private ConvegnoDAOPostgre convegnoPostgre;
+    private FilmDAOPostgre filmPostgre;
+    private GiornaleDAOPostgre giornalePostgre;
+    private IntervistaDAOPostgre intervistaPostgre;
+    private LeggeDAOPostgre leggePostgre;
+    private PodcastDAOPostgre podcastPostgre;
+    private RivistaDAOPostgre rivistaPostgre;
+    private TesiDAOPostgre tesiPostgre;
+    private WebDAOPostgre webPostgre;
     private FrameTabellaRiferimenti finestraTabella;
     private FrameCreaCategoria finestraCategoria;
     private ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
@@ -35,6 +46,9 @@ public class Controller {
 
     public Controller() throws SQLException, IOException {
         startConnection();
+        categorie = categoriaDAO.ottieniCategorie();
+        tags = tagDAO.ottieniTags();
+        riferimenti = riferimentoDAO.ottieniRiferimenti();
         riferimentoDAO = new RiferimentoDAOPostgre(connection);
         finestraTabella = new FrameTabellaRiferimenti("Riferimenti", this);
         finestraTabella.setVisible(true);
@@ -54,7 +68,16 @@ public class Controller {
             categoriaDAO = new CategoriaDAOPostgre(connection);
             citazioneDAO = new CitazioneDAOPostgre(connection);
             riferimentoDAO = new RiferimentoDAOPostgre(connection);
-            libroDAO = new LibroDAOPostgre(connection);
+            libroPostgre = new LibroDAOPostgre(connection);
+            convegnoPostgre = new ConvegnoDAOPostgre(connection);
+            filmPostgre = new FilmDAOPostgre(connection);
+            giornalePostgre = new GiornaleDAOPostgre(connection);
+            intervistaPostgre = new IntervistaDAOPostgre(connection);
+            leggePostgre = new LeggeDAOPostgre(connection);
+            podcastPostgre = new PodcastDAOPostgre(connection);
+            rivistaPostgre = new RivistaDAOPostgre(connection);
+            tesiPostgre = new TesiDAOPostgre(connection);
+            webPostgre = new WebDAOPostgre(connection);
             sottocategoriaDAO = new SottocategoriaDAOPostgre(connection);
             tagDAO = new TagDAOPostgre(connection);
         }
@@ -63,37 +86,99 @@ public class Controller {
         }
     }
 
-    public ArrayList<Riferimento> ottieniRiferimenti() {
-        riferimenti = riferimentoDAO.ottieniRiferimenti();
-        return riferimenti;
-    }
-
-    public ArrayList<Categoria> ottieniCategorie() throws SQLException {
-        categorie = categoriaDAO.ottieniCategorie();
-        return categorie;
-    }
-
-    public ArrayList<String> ottieniTags() throws SQLException {
-        tags = tagDAO.ottieniTags();
-        return tags;
-    }
-
     public void creaRiferimento(Riferimento riferimento) throws SQLException {
         if (riferimento instanceof Libro) {
             Libro l = (Libro) riferimento;
-            l.setCodice(libroDAO.inserisciLibro(l));
+            l.setCodice(libroPostgre.inserisciLibro(l));
+        }
+        if (riferimento instanceof Convegno) {
+            Convegno c = (Convegno) riferimento;
+            c.setCodice(convegnoPostgre.inserisciConvegno(c));
+        }
+        if (riferimento instanceof Film) {
+            Film f = (Film) riferimento;
+            f.setCodice(filmPostgre.inserisciFilm(f));
+        }
+        if (riferimento instanceof Giornale) {
+            Giornale g = (Giornale) riferimento;
+            g.setCodice(giornalePostgre.inserisciGiornale(g));
+        }
+        if (riferimento instanceof Intervista) {
+            Intervista i = (Intervista) riferimento;
+            i.setCodice(intervistaPostgre.inserisciRivista(i));
+        }
+        if (riferimento instanceof Legge) {
+            Legge l = (Legge) riferimento;
+            l.setCodice(leggePostgre.inserisciLegge(l));
+        }
+        if (riferimento instanceof Podcast) {
+            Podcast p = (Podcast) riferimento;
+            p.setCodice(podcastPostgre.inserisciPodcast(p));
+        }
+        if (riferimento instanceof Rivista) {
+            Rivista r = (Rivista) riferimento;
+            r.setCodice(rivistaPostgre.inserisciRivista(r));
+        }
+        if (riferimento instanceof Tesi) {
+            Tesi t = (Tesi) riferimento;
+            t.setCodice(tesiPostgre.inserisciTesi(t));
+        }
+        if (riferimento instanceof Web) {
+            Web w = (Web) riferimento;
+            w.setCodice(webPostgre.inserisciWeb(w));
         }
     }
 
     public void modificaRiferimento(Riferimento riferimento) throws SQLException {
         if (riferimento instanceof  Libro) {
             Libro l = (Libro) riferimento;
-            libroDAO.modificaLibro(l);
+            libroPostgre.modificaLibro(l);
+        }
+        if (riferimento instanceof Convegno) {
+            Convegno c = (Convegno) riferimento;
+            convegnoPostgre.modificaConvegno(c);
+        }
+        if (riferimento instanceof Film) {
+            Film f = (Film) riferimento;
+            filmPostgre.modificaFilm(f);
+        }
+        if (riferimento instanceof Giornale) {
+            Giornale g = (Giornale) riferimento;
+            giornalePostgre.modificaGiornale(g);
+        }
+        if (riferimento instanceof Intervista) {
+            Intervista i = (Intervista) riferimento;
+            intervistaPostgre.modificaIntervista(i);
+        }
+        if (riferimento instanceof Legge) {
+            Legge l = (Legge) riferimento;
+            leggePostgre.modificaLegge(l);
+        }
+        if (riferimento instanceof Podcast) {
+            Podcast p = (Podcast) riferimento;
+            podcastPostgre.modificaPodcast(p);
+        }
+        if (riferimento instanceof Rivista) {
+            Rivista r = (Rivista) riferimento;
+            rivistaPostgre.modificaRivista(r);
+        }
+        if (riferimento instanceof Tesi) {
+            Tesi t = (Tesi) riferimento;
+            tesiPostgre.modificaTesi(t);
+        }
+        if (riferimento instanceof Web) {
+            Web w = (Web) riferimento;
+            webPostgre.modificaWeb(w);
         }
     }
 
     public void eliminaRiferimento(String id) throws SQLException {
         riferimentoDAO.eliminaRiferimento(id);
+        for (Riferimento r: riferimenti)
+            if (r.getCodice().equals(id)) {
+                riferimenti.remove(r);
+                break;
+            }
     }
 
     public void aggiungiAlCatalogo(String riferimento_id, String categoria_id) throws SQLException {
@@ -104,38 +189,51 @@ public class Controller {
         catalogoDAO.rimuoviDalCatalogo(riferimento_id, categoria_id);
     }
 
+    public void aggiungiCitazione(String riferimento_id, String menzionato) throws SQLException {
+        for (Riferimento riferimento: riferimenti)
+            if (riferimento.getTitolo().equals(menzionato))
+                citazioneDAO.associaRiferimento(riferimento_id, riferimento.getCodice());
+    }
+
     public void creaCategoria(Categoria categoria) throws SQLException {
         categoria.setCodice(categoriaDAO.creaCategoria(categoria));
+        categorie.add(categoria);
     }
 
     public void eliminaCategoria(String id) throws SQLException {
         categoriaDAO.eliminaCategoria(id);
+        for (Categoria cat: categorie)
+            if (cat.getCodice().equals(id))
+                categorie.remove(cat);
     }
 
     public void creaTag(String tag) throws SQLException {
         tagDAO.creaTag(tag);
+        tags.add(tag);
     }
 
     public void eliminaTag(String tag) throws SQLException {
         tagDAO.eliminaTag(tag);
+        tags.remove(tag);
     }
 
-    public void mostraInformazioniRiferimento(Riferimento riferimento) {
+    public void mostraInformazioniRiferimento(Riferimento riferimento, DefaultTableModel model, int index) {
         FrameGestioneRiferimento finestraRiferimento = new FrameGestioneRiferimento("Modifica", this);
-        finestraRiferimento.setVisible(true);
-        finestraRiferimento.mostraRiferimento(riferimento, finestraTabella);
+        finestraRiferimento.mostraRiferimento(riferimento, model, index);
+        finestraRiferimento.setVisible(true); //Apparentemente se non viene eseguita dopo, il frame non viene visualizzato. Non ho idea del perché.
     }
 
-    public void mostraCreazioneRiferimento() {
+    public void mostraCreazioneRiferimento(DefaultTableModel model) {
         FrameGestioneRiferimento finestraRiferimento = new FrameGestioneRiferimento("Crea", this);
         finestraRiferimento.setVisible(true);
-        finestraRiferimento.creaNuovoRiferimento(finestraTabella);
+        finestraRiferimento.creaNuovoRiferimento(model);
     }
 
-    public void mostraCreazioneCategoria() throws SQLException {
+    public void mostraCreazioneCategoria(DefaultListModel model) throws SQLException {
+        Categoria categoria = new Categoria();
         finestraCategoria = new FrameCreaCategoria("Nuova Categoria", this);
         finestraCategoria.setVisible(true);
-        finestraCategoria.creaCategoria(finestraTabella);
+        finestraCategoria.creaCategoria(model, categoria);
     }
 
     public ArrayList<Riferimento> getRiferimenti() {

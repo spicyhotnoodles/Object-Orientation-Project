@@ -2,14 +2,14 @@ package DBEntities;
 
 public class Tesi extends Riferimento {
     private String doi;
-    private String tipo;
+    private String tipoTesi;
     private String ateneo;
 
 
     protected Tesi(Builder builder) {
         super(builder);
         this.doi = builder.doi;
-        this.tipo = builder.tipo;
+        this.tipoTesi = builder.tipoTesi;
         this.ateneo = builder.ateneo;
     }
 
@@ -17,7 +17,7 @@ public class Tesi extends Riferimento {
 
     public static class Builder extends Riferimento.Builder<Builder> {
         private String doi;
-        private String tipo;
+        private String tipoTesi;
         private String ateneo;
 
         @Override
@@ -31,7 +31,7 @@ public class Tesi extends Riferimento {
         }
 
         public Builder tipo(String tipo) {
-            this.tipo = tipo;
+            this.tipoTesi = tipo;
             return this;
         }
 
@@ -49,14 +49,10 @@ public class Tesi extends Riferimento {
         this.doi = doi;
     }
 
-    @Override
-    public String getTipo() {
-        return tipo;
-    }
+    public String getTipoTesi() { return tipoTesi; }
 
-    @Override
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setTipoTesi(String tipoTesi) {
+        this.tipoTesi = tipoTesi;
     }
 
     public String getAteneo() {

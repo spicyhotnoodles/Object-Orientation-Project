@@ -23,11 +23,11 @@ public class CategoriaDAOPostgre implements CategoriaDAO {
         String id = "";
         creaCategoria = connection.prepareStatement("insert into categoria values (default, ?, ?)");
         creaCategoria.setString(1, categoria.getNome());
-        if (categoria.getPadre().equals(""))
+        if (categoria.getSupercategoria().equals(""))
             creaCategoria.setObject(2, null);
         else {
             PreparedStatement ottieniPadre = connection.prepareStatement("select categoria_id from categoria where nome = ?");
-            ottieniPadre.setString(1, categoria.getPadre());
+            ottieniPadre.setString(1, categoria.getSupercategoria());
             ResultSet padre = ottieniPadre.executeQuery();
             if (padre.next())
                 creaCategoria.setInt(2, padre.getInt("categoria_id"));
@@ -56,7 +56,7 @@ public class CategoriaDAOPostgre implements CategoriaDAO {
             Categoria c = new Categoria.Builder()
                     .setCodice(categoria.getString("categoria_id"))
                     .setNome(categoria.getString("nome"))
-                    .setPadre(categoria.getString("supercategoria_id"))
+                    .setSupercategoria(categoria.getString("supercategoria_id"))
                     .build();
             categorie.add(c);
         }

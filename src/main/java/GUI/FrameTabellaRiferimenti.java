@@ -29,9 +29,6 @@ public class FrameTabellaRiferimenti extends JFrame {
     private JLabel categoriaLabel;
     private JLabel tagLabel;
     private Controller c;
-    private ArrayList<Riferimento> riferimenti = new ArrayList<>();
-    private ArrayList<Categoria> categorie = new ArrayList<>();
-    private ArrayList<String> tags = new ArrayList<>();
     private DefaultListModel categoriaLM = new DefaultListModel<>();
     private DefaultListModel tagLM = new DefaultListModel<>();
 
@@ -46,24 +43,21 @@ public class FrameTabellaRiferimenti extends JFrame {
         creaTabellaRiferimenti();
         categoriaList.setModel(categoriaLM);
         tagList.setModel(tagLM);
-        riempiListaCategorie();
-        riempiListaTags();
+        for (Categoria cat: c.getCategorie())
+            categoriaLM.addElement(cat.getNome());
+        for (String tag: c.getTags())
+            tagLM.addElement(tag);
         riempiTabella();
         tableRiferimenti.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if(e.getClickCount() >= 2)
-                    c.mostraInformazioniRiferimento(riferimenti.get(tableRiferimenti.getSelectedRow()));
-            }
-        });
-        nuovaCatButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    c.mostraCreazioneCategoria();
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                if(e.getClickCount() >= 2) {
+                    for (Riferimento r : c.getRiferimenti()) {
+                        if (tableRiferimenti.getValueAt(tableRiferimenti.getSelectedRow(), 0).equals(r.getTitolo())) {
+                            c.mostraInformazioniRiferimento(r, (DefaultTableModel) tableRiferimenti.getModel(), tableRiferimenti.getSelectedRow());
+                        }
+                    }
                 }
             }
         });
@@ -75,6 +69,35 @@ public class FrameTabellaRiferimenti extends JFrame {
                 TableRowSorter tr = new TableRowSorter(tableRiferimenti.getModel());
                 tableRiferimenti.setRowSorter(tr);
                 tr.setRowFilter(RowFilter.regexFilter("(?i)" + filtro));
+            }
+        });
+        nuovaCatButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    c.mostraCreazioneCategoria(categoriaLM);
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        eliminaCatButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (categoriaList.getSelectedIndex() == -1)
+                    JOptionPane.showMessageDialog(mainPanel, "Selezionare l'oggetto da eliminare!", "Errore!", JOptionPane.ERROR_MESSAGE);
+                else {
+                    if (JOptionPane.showConfirmDialog(mainPanel, "Eliminando la seguente categoria, verrano (eventulmente) eliminate tutte le rispettive sottocategorie," +
+                            "\ninoltre tutti i riferimenti categorizzati non apparterrano più ad essa. Procedere? ") == JOptionPane.YES_OPTION) {
+                        try {
+                            c.eliminaCategoria(c.getCategorie().get(categoriaList.getSelectedIndex()).getCodice());
+                            JOptionPane.showMessageDialog(mainPanel, "Categoria eliminata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                            categoriaLM.remove(categoriaList.getSelectedIndex());
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
             }
         });
         categoriaList.addMouseListener(new MouseAdapter() {
@@ -107,26 +130,10 @@ public class FrameTabellaRiferimenti extends JFrame {
                 }
             }
         });
-        eliminaCatButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (categoriaList.getSelectedIndex() == -1)
-                    JOptionPane.showMessageDialog(mainPanel, "Selezionare l'oggetto da eliminare!", "Errore!", JOptionPane.ERROR_MESSAGE);
-                else {
-                    try {
-                        c.eliminaCategoria(categorie.get(categoriaList.getSelectedIndex()).getCodice());
-                        JOptionPane.showMessageDialog(mainPanel, "Categoria eliminata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                        riempiListaCategorie();
-                    } catch (SQLException e) {
-                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
         nuovoRiferimentoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                c.mostraCreazioneRiferimento();
+                c.mostraCreazioneRiferimento((DefaultTableModel) tableRiferimenti.getModel());
             }
         });
         eliminaRiferimentoButton.addActionListener(new ActionListener() {
@@ -135,12 +142,21 @@ public class FrameTabellaRiferimenti extends JFrame {
                 if (tableRiferimenti.getSelectedRow() == -1)
                     JOptionPane.showMessageDialog(mainPanel, "Selezionare l'oggetto da eliminare!", "Errore!", JOptionPane.ERROR_MESSAGE);
                 else {
-                    try {
-                        c.eliminaRiferimento(riferimenti.get(tableRiferimenti.getSelectedRow()).getCodice());
-                        JOptionPane.showMessageDialog(mainPanel, "Riferimento eliminato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                        riempiTabella();
-                    } catch (SQLException e) {
-                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    if (JOptionPane.showConfirmDialog(mainPanel, "Eliminare il riferimento selezionato?") == JOptionPane.YES_OPTION) {
+                        try {
+                            for (Riferimento r : c.getRiferimenti()) {
+                                if (tableRiferimenti.getValueAt(tableRiferimenti.getSelectedRow(), 0).equals(r.getTitolo())) {
+                                    c.eliminaRiferimento(r.getCodice());
+                                    JOptionPane.showMessageDialog(mainPanel, "Riferimento eliminato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                                    DefaultTableModel model = (DefaultTableModel) tableRiferimenti.getModel();
+                                    model.removeRow(tableRiferimenti.getSelectedRow());
+                                    break;
+                                }
+                            }
+
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
             }
@@ -152,7 +168,7 @@ public class FrameTabellaRiferimenti extends JFrame {
                 try {
                     c.creaTag(tag);
                     JOptionPane.showMessageDialog(mainPanel, "Tag creato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                    riempiListaTags();
+                    tagLM.addElement(tag);
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                 }
@@ -161,58 +177,42 @@ public class FrameTabellaRiferimenti extends JFrame {
         eliminaTagButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    c.eliminaTag(tagList.getSelectedValue().toString());
-                    JOptionPane.showMessageDialog(mainPanel, "Tag eliminato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                    riempiListaTags();
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                if (JOptionPane.showConfirmDialog(mainPanel, "Eliminare il tag selezionato?") == JOptionPane.YES_OPTION) {
+                    try {
+                        c.eliminaTag(tagList.getSelectedValue().toString());
+                        JOptionPane.showMessageDialog(mainPanel, "Tag eliminato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                        tagLM.remove(tagList.getSelectedIndex());
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
     }
 
     private void creaTabellaRiferimenti() {
-        tableRiferimenti.setModel(new DefaultTableModel(null, new String[]{"Titolo", "Autori", "Tipologia", "Anno", "Lingua", "Tags", "Categorie"}));
+        tableRiferimenti.setModel(new DefaultTableModel(null, new String[]{"Titolo", "Autori", "Tipologia", "Anno", "Lingua", "Rimandi", "Tags", "Categorie"}));
+        tableRiferimenti.setAutoCreateRowSorter(true);
         TableColumnModel tcm = tableRiferimenti.getColumnModel();
-        tcm.removeColumn(tcm.getColumn(5));
-        tcm.removeColumn(tcm.getColumn(5));
+        tcm.removeColumn(tcm.getColumn(7));
+        tcm.removeColumn(tcm.getColumn(6));
     }
 
     public void riempiTabella() {
-        riferimenti.clear();
-        riferimenti = c.ottieniRiferimenti();
         DefaultTableModel model = (DefaultTableModel) tableRiferimenti.getModel();
         model.setRowCount(0);
         tableRiferimenti.setDefaultEditor(Object.class, null); //rende la tabella non editabile
-        for (Riferimento r : riferimenti) {
+        for (Riferimento r : c.getRiferimenti()) {
             String autori = "";
             String tags = "";
             String categorie = "";
             for (String autore: r.getAutori())
-                autori = autori + autore.toString() + "; ";
+                autori = autori + autore + "; ";
             for (Categoria categoria: r.getCategorie())
                 categorie = categorie + categoria.getNome() + "; ";
             for (String tag: r.getTags())
                 tags = tags + r.getTags() + "; ";
-            model.addRow(new Object[]{r.getTitolo(), autori, r.getTipo(), r.getData(), r.getLingua(), tags, categorie});
-        }
-    }
-
-    public void riempiListaCategorie() throws SQLException {
-        categoriaLM.clear();
-        categorie.clear();
-        categorie = c.ottieniCategorie();
-        for (Categoria cat: categorie)
-            categoriaLM.addElement(cat.getNome());
-    }
-
-    public void riempiListaTags() throws SQLException {
-        tagLM.clear();
-        tags.clear();
-        tags = c.ottieniTags();
-        for (String tag: tags) {
-            tagLM.addElement(tag);
+            model.addRow(new Object[]{r.getTitolo(), autori, r.getTipo(), r.getData(), r.getLingua(), r.getRimandi(), tags, categorie});
         }
     }
 }

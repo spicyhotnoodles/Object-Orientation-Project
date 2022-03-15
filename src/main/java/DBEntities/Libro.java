@@ -66,7 +66,7 @@ public class Libro extends Riferimento {
                 ", tipo='" + super.getTipo() + '\'' +
                 ", categorie=" + super.getCategorie() + '\'' +
                 ", tags= " + super.getTags() + '\'' +
-                ", rimandi= " + super.getRimandi() + '\'' +
+                ", rimandi= " + super.getCitazioni() + '\'' +
                 ", pagine='" + pagine + '\'' +
                 ", isbn='" + isbn + '\'' +
                 ", serie='" + serie + '\'' +

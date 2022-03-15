@@ -1,16 +1,10 @@
 package DAOImplementations;
 
 import DAO.LibroDAO;
-import DBEntities.Categoria;
 import DBEntities.Libro;
-import GUI.FinestraPrincipale;
 
-import javax.swing.*;
-import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class LibroDAOPostgre implements LibroDAO {
 
@@ -70,17 +64,6 @@ public class LibroDAOPostgre implements LibroDAO {
             connection.rollback();
         }
         connection.setAutoCommit(true);
-        if (!libro.getCategorie().isEmpty())
-            try {
-                PreparedStatement ps = connection.prepareStatement(inserisciLibro[3]);
-                for (Categoria c : libro.getCategorie()) {
-                    ps.setInt(1, Integer.parseInt(codice));
-                    ps.setInt(2, Integer.parseInt(c.getCodice()));
-                    ps.executeUpdate();
-                }
-            } catch (SQLException e) {
-                System.out.println("Inserimento fallito! Inserimento di un oggetto catalogo (libro) fallito:\n" + e);
-            }
         return codice;
     }
 
@@ -108,7 +91,7 @@ public class LibroDAOPostgre implements LibroDAO {
 
 
     @Override
-    public int modificaLibro(Libro libro) throws SQLException {
+    public void modificaLibro(Libro libro) throws SQLException {
         String s = "";
         s = componiAutori(libro.getAutori());
         try {
@@ -137,58 +120,5 @@ public class LibroDAOPostgre implements LibroDAO {
             System.out.println("Transazione interrotta! Prima istruzione di modifica di un oggetto libro fallita:\n" + e);
         }
         connection.setAutoCommit(true);
-        //Se il nuovo libro contiene una (nuova) lista di categorie
-        if (!libro.getCategorie().isEmpty()) {
-            Statement st = connection.createStatement();
-            try {
-                ResultSet rs = st.executeQuery("select * from catalogo where riferimento_id = " + libro.getCodice());
-                PreparedStatement ps;
-                if (rs.next()) {
-                    try {
-                        ps = connection.prepareStatement("update catalogo set categoria_id = cast(? as int) where riferimento_id = cast(? as int)");
-                        for (Categoria c : libro.getCategorie()) {
-                            ps.setString(1, c.getCodice());
-                            ps.setString(2, libro.getCodice());
-                            ps.executeUpdate();
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Modifica fallita! Aggiornamento di un oggetto catalogo (libro) fallito:\n" + e);
-                    }
-                } else {
-                    try {
-                        ps = connection.prepareStatement("insert into catalogo values (cast(? as int), cast(? as int));");
-                        for (Categoria c : libro.getCategorie()) {
-                            ps.setString(1, c.getCodice());
-                            ps.setString(2, libro.getCodice());
-                            ps.executeUpdate();
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Modifica fallita! Inserimento di un oggetto catalogo (libro) fallito:\n" + e);
-                    }
-                }
-            } catch (SQLException e) {
-                System.out.println("Modifica fallita! Selezione di un oggetto catalogo (libro) fallito:\n" + e);
-            }
-        }
-        //Se non ci sono nuove categorie
-        else {
-            Statement st = connection.createStatement();
-            try {
-                ResultSet rs = st.executeQuery("select * from catalogo where riferimento_id = " + libro.getCodice());
-                if (rs.next()) {
-                    PreparedStatement ps;
-                    try {
-                        ps = connection.prepareStatement("delete from catalogo where riferimento_id = cast(? as int)");
-                        ps.setString(1, libro.getCodice());
-                        ps.executeUpdate();
-                    } catch (SQLException e) {
-                        System.out.println("Modifica fallita! Eliminazione di un oggetto catalogo (libro) fallito:\n" + e);
-                    }
-                }
-            } catch (SQLException e) {
-                System.out.println("Modifica fallita! Selezione di un oggetto catalogo (libro) fallito:\n" + e);
-            }
-        }
-        return 0;
     }
 }

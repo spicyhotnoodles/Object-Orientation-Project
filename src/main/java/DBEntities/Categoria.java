@@ -1,25 +1,26 @@
 package DBEntities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Categoria {
 
     private String codice;
     private String nome;
-    private String padre;
+    private String supercategoria;
 
-    private Categoria() {}
+    public Categoria() {
+        this.codice = "";
+        this.supercategoria = "";
+        this.nome = "";
+    }
 
     public static class Builder {
         private String codice;
         private String nome;
-        private String padre;
+        private String supercategoria;
 
         public Builder() {
             this.codice = "";
             this.nome = "";
-            this.padre = "";
+            this.supercategoria = "";
         }
 
         public Builder setCodice(String codice) {
@@ -32,8 +33,8 @@ public class Categoria {
             return this;
         }
 
-        public Builder setPadre(String padre) {
-            this.padre = padre;
+        public Builder setSupercategoria(String supercategoria) {
+            this.supercategoria = supercategoria;
             return this;
         }
 
@@ -41,7 +42,7 @@ public class Categoria {
             Categoria categoria = new Categoria();
             categoria.codice = this.codice;
             categoria.nome = this.nome;
-            categoria.padre = this.padre;
+            categoria.supercategoria = this.supercategoria;
             return categoria;
         }
 
@@ -55,8 +56,8 @@ public class Categoria {
         return nome;
     }
 
-    public String getPadre() {
-        return padre;
+    public String getSupercategoria() {
+        return supercategoria;
     }
 
     public void setCodice(String codice) {
@@ -67,12 +68,14 @@ public class Categoria {
         this.nome = nome;
     }
 
+    public void setSupercategoria(String supercategoria) { this.supercategoria = supercategoria; }
+
     @Override
     public String toString() {
         return "Categoria{" +
                 "codice='" + codice + '\'' +
                 ", nome='" + nome + '\'' +
-                ", padre='" + padre + '\'' +
+                ", supercategoria='" + supercategoria + '\'' +
                 '}';
     }
 }

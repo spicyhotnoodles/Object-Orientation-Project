@@ -32,7 +32,7 @@ public class CatalogoDAOPostgre implements CatalogoDAO {
             rs.getString("supercategoria_id");
             if (rs.wasNull()) {
                 rimuoviDalCatalogo = connection.prepareStatement("delete from catalogo where categoria_id = cast(? as int) and riferimento_id = cast(? as int)");
-                rimuoviDalCatalogo.setString(1, riferimento_id);
+                rimuoviDalCatalogo.setString(1, categoria_id);
                 rimuoviDalCatalogo.setString(2, riferimento_id);
                 rimuoviDalCatalogo.executeUpdate();
             }

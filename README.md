@@ -157,7 +157,7 @@ create table citazione (
     id_citazione serial primary key,
     menzionato_id int,
     riferimento_id int,
-    constraint citato foreign key (menzionato_id) references Riferimento(riferimento_id),
+    constraint citato foreign key (menzionato_id) references Riferimento(riferimento_id) on delete cascade,
     constraint citante foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
 )
 
@@ -165,14 +165,16 @@ create table tag (
 	id_tag serial primary key,
     parola varchar(15) unique,
     riferimento_id int,
-    constraint riferimento_tags foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
+    constraint riferimento_tags foreign key (riferimento_id) references Riferimento(riferimento_id) on delete set null
 )
 
 -- La tabella `categoria` contiene tutte le categorie create dall'utente
 
 create table categoria (
     id_categoria serial primary key,
-    nome varchar(100) unique
+    nome varchar(100) unique,
+    supercategoria_id int,
+    constraint antenato foreign key (supercategoria_id) references Categoria(id_categoria) on delete cascade
 )
 
 -- La tabella `catalogo` codifica la relazione * a * tra `riferimento` e `categoria`. Consente di risalire alla categoria di ciascun riferimento, oppure di verificare quali riferimenti appartengono ad una data categoria.
@@ -184,23 +186,6 @@ create table catalogo (
     -- Vincoli interrelazionali
     constraint riferimento foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade,
     constraint categoria foreign key (categoria_id) references Categoria(categoria_id) on delete cascade
-)
-
--- La tabella `sottocategoria` indica le possibili sottocategorie di una supercategoria. Poiché potenzialmente una supercategoria potrebbe avere più di una sottocategoria, è inclusa una chiave esterna `supercategoria` che consente di risalire a tutte le sottocategorie di una supercategoria.
-
-create table sottocategoria (
-    id_sottocategoria int,
-    nome varchar(100),
-    padre_id varchar(100),
-    -- Vincoli interrelazionali
-    constraint categoria_padre foreign key (supercategoria) references Categoria(categoria_id) on delete cascade
-)
-
-create table categoria (
-	id_categoria serial primary key,
-	nome varchar(50),
-	id_supercategoria int,
-	constraint gerarchia foreign key (id_supercategoria) references categoria (id_categoria)
 )
 
 ```

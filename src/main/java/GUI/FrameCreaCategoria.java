@@ -25,16 +25,15 @@ public class FrameCreaCategoria extends JFrame {
         this.pack();
         this.setBounds(800, 400, 400, 200);
         supercategoriaComboBox.setEnabled(false);
-        ArrayList<Categoria> categorie = c.ottieniCategorie();
-        if (categorie.isEmpty())
+        if (c.getCategorie().isEmpty())
             sottoCategoriaRadioButton.setEnabled(false);
         else {
-            for (Categoria cat : c.ottieniCategorie())
+            for (Categoria cat : c.getCategorie())
                 supercategoriaComboBox.addItem(cat.getNome());
         }
     }
 
-    public void creaCategoria(FrameTabellaRiferimenti frame) {
+    public void creaCategoria(DefaultListModel model, Categoria categoria) {
         sottoCategoriaRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -51,18 +50,13 @@ public class FrameCreaCategoria extends JFrame {
                 if (nome.equals(""))
                     JOptionPane.showMessageDialog(mainPanel, "La categoria deve avere un nome!", "Errore", JOptionPane.ERROR_MESSAGE);
                 else {
-                    String supercategoria = "";
-                    if (supercategoriaComboBox.isEnabled()) {
-                        supercategoria = (String) supercategoriaComboBox.getSelectedItem();
-                    }
-                    Categoria categoria = new Categoria.Builder()
-                            .setNome(nome)
-                            .setPadre(supercategoria)
-                            .build();
+                    if (supercategoriaComboBox.isEnabled())
+                        categoria.setSupercategoria((String) supercategoriaComboBox.getSelectedItem());
+                    categoria.setNome(nome);
                     try {
                         c.creaCategoria(categoria);
                         JOptionPane.showMessageDialog(mainPanel, "Categoria creata con successo", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                        frame.riempiListaCategorie();
+                        model.addElement(categoria.getNome());
                         dispose();
                     } catch (SQLException e) {
                         JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);

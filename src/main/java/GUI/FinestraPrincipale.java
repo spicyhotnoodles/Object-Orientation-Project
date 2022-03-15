@@ -2,7 +2,6 @@ package GUI;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.event.TreeModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
 import java.awt.*;
@@ -224,7 +223,7 @@ public class FinestraPrincipale extends JFrame {
         aggiungiCategorie(root);
         //oscura tutti gli attributi
         tabbedPane.setVisible(false);
-        riferimenti = theController.ottieniRiferimenti();
+        //riferimenti = theController.ottieniRiferimenti();
         riempiTabella(riferimenti);
         //action listners:
         //action listner per la combobox del tipo di riferimento
@@ -302,7 +301,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: libro.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: libro.getRimandi())
+                    for (Riferimento r: libro.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     descrizioneRiferimentoTextArea.setText(libro.getDescrizione());
                     dataTextField.setText(libro.getData());
@@ -324,7 +323,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: rivista.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: rivista.getRimandi())
+                    for (Riferimento r: rivista.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     descrizioneRiferimentoTextArea.setText(rivista.getDescrizione());
                     dataTextField.setText(rivista.getData());
@@ -345,7 +344,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: convegno.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: convegno.getRimandi())
+                    for (Riferimento r: convegno.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     descrizioneRiferimentoTextArea.setText(convegno.getDescrizione());
                     dataTextField.setText(convegno.getData());
@@ -365,7 +364,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: giornale.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: giornale.getRimandi())
+                    for (Riferimento r: giornale.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     descrizioneRiferimentoTextArea.setText(giornale.getDescrizione());
                     dataTextField.setText(giornale.getData());
@@ -386,7 +385,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: tesi.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: tesi.getRimandi())
+                    for (Riferimento r: tesi.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     descrizioneRiferimentoTextArea.setText(tesi.getDescrizione());
                     dataTextField.setText(tesi.getData());
@@ -407,7 +406,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: web.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: web.getRimandi())
+                    for (Riferimento r: web.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     descrizioneRiferimentoTextArea.setText(web.getDescrizione());
                     dataTextField.setText(web.getData());
@@ -428,7 +427,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: film.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: film.getRimandi())
+                    for (Riferimento r: film.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     descrizioneRiferimentoTextArea.setText(film.getDescrizione());
                     dataTextField.setText(film.getData());
@@ -449,7 +448,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: intervista.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: intervista.getRimandi())
+                    for (Riferimento r: intervista.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     for (String o: intervista.getOspiti())
                     descrizioneRiferimentoTextArea.setText(intervista.getDescrizione());
@@ -469,17 +468,17 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: legge.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: legge.getRimandi())
+                    for (Riferimento r: legge.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     dataTextField.setText(legge.getData());
                     linguaTextField.setText(legge.getLingua());
                     numeroLeggeTextField.setText(legge.getNumero());
                     codiceLeggeTextField.setText(legge.getCodice());
-                    if (legge.getTipo().equalsIgnoreCase("Legge"))
+                    if (legge.getTipoLegge().equalsIgnoreCase("Legge"))
                         tipoLeggeComboBox.setSelectedIndex(1);
-                    if (legge.getTipo().equalsIgnoreCase("Decreto"))
+                    if (legge.getTipoLegge().equalsIgnoreCase("Decreto"))
                         tipoLeggeComboBox.setSelectedIndex(2);
-                    if (legge.getTipo().equalsIgnoreCase("Altro"))
+                    if (legge.getTipoLegge().equalsIgnoreCase("Altro"))
                         tipoLeggeComboBox.setSelectedIndex(3);
                 }
                 if (riferimenti.get(riferimentiTable.getSelectedRow()) instanceof Podcast) {
@@ -493,7 +492,7 @@ public class FinestraPrincipale extends JFrame {
                         listaAutoriDLModel.addElement(a.toString());
                     for (String t: podcast.getTags())
                         listaTagDLModel.addElement(t.toString());
-                    for (Riferimento r: podcast.getRimandi())
+                    for (Riferimento r: podcast.getCitazioni())
                         listaRimandiDLModel.addElement(r.getTitolo());
                     dataTextField.setText(podcast.getData());
                     linguaTextField.setText(podcast.getLingua());
@@ -873,23 +872,23 @@ public class FinestraPrincipale extends JFrame {
         n.add(nodo);
         Categoria categoria = new Categoria.Builder()
                 .setNome(s)
-                .setPadre(n.toString())
+                .setSupercategoria(n.toString())
                 .build();
         //theController.creaCategoria(categoria);
         ((DefaultTreeModel) categoriaTree.getModel()).reload();
     }
 
     public void aggiungiCategorie(DefaultMutableTreeNode root) throws SQLException {
-        ArrayList<Categoria> categorie = theController.ottieniCategorie();
+        ArrayList<Categoria> categorie = theController.getCategorie();
         for (Categoria cat: categorie) {
-            if (cat.getPadre().equals("")) {
+            if (cat.getSupercategoria().equals("")) {
                 DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(cat.getNome());
                 root.add(nodo);
             }
         }
         for (Categoria cat: categorie) {
-            if (!cat.getPadre().equals("")){
-                DefaultMutableTreeNode padre = trovaNodo(root, cat.getPadre());
+            if (!cat.getSupercategoria().equals("")){
+                DefaultMutableTreeNode padre = trovaNodo(root, cat.getSupercategoria());
                 DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(cat.getNome());
                 padre.add(nodo);
             }

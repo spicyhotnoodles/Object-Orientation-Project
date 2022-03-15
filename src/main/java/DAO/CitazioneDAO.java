@@ -1,10 +1,9 @@
 package DAO;
 
-import DBEntities.Riferimento;
-
-import java.util.ArrayList;
+import java.sql.SQLException;
 
 public interface CitazioneDAO {
 
-    int associaRiferimenti(Riferimento riferimento, ArrayList<Riferimento> menzioni);
+    void associaRiferimento(String riferimento_id, String categoria_id) throws SQLException;
+    void disassociaRiferimento(String riferimento_id, String categoria_id) throws SQLException;
 }

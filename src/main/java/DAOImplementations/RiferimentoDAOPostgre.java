@@ -32,7 +32,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
     public ArrayList<Riferimento> ottieniRiferimenti() {
         ArrayList<Riferimento> riferimenti = new ArrayList<Riferimento>();
         ArrayList<String> autori = new ArrayList<String>();
-        ArrayList<Riferimento> rimandi = new ArrayList<Riferimento>();
+        ArrayList<Riferimento> citazioni = new ArrayList<Riferimento>();
         ArrayList<String> tags = new ArrayList<String>();
         ArrayList<Categoria> categorie = new ArrayList<>();
         try {
@@ -46,12 +46,22 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
             ResultSet tesi;
             ResultSet leggi;
             ResultSet web;
+            PreparedStatement calcolaRimandi = connection.prepareStatement("select count(menzionato_id) from citazione where menzionato_id = cast(? as int) group by menzionato_id");
+            ResultSet rimandi;
+            int numeroRimandi = 0;
+
             Statement st = connection.createStatement();
             try {
                 libri = st.executeQuery(ottieniRiferimenti[0]);
                 while (libri.next()) {
+                    calcolaRimandi.setString(1, libri.getString("riferimento_id"));
+                    rimandi = calcolaRimandi.executeQuery();
+                    if (rimandi.next())
+                        numeroRimandi = rimandi.getInt("count");
+                    else
+                        numeroRimandi = 0;
                     autori = estraiLista(libri.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(libri.getString("riferimento_id"));
+                    citazioni = ottieniCitazioniRiferimento(libri.getString("riferimento_id"));
                     tags = ottieniTagsRiferimento(libri.getString("riferimento_id"));
                     categorie = ottieniCategorieRiferimento(libri.getString("riferimento_id"));
                     Libro l = Libro.builder()
@@ -62,12 +72,13 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(libri.getString("descrizione"))
                             .lingua(libri.getString("lingua"))
                             .tipo("Libro")
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .categorie(categorie)
                             .isbn(libri.getString("isbn"))
                             .pagine(libri.getString("pagine"))
                             .serie(libri.getString("serie"))
+                            .rimandi(numeroRimandi)
                             .volume(libri.getString("volume"))
                             .build();
                     riferimenti.add(l);
@@ -79,7 +90,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 riviste = st.executeQuery(ottieniRiferimenti[1]);
                 while (riviste.next()) {
                     autori = estraiLista(riviste.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(riviste.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(riviste.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(riviste.getString("id_riferimento"));
                     Rivista r = Rivista.builder()
                             .codice(riviste.getString("id_riferimento"))
@@ -89,7 +100,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(riviste.getString("descrizione"))
                             .lingua(riviste.getString("lingua"))
                             .tipo(riviste.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .issn(riviste.getString("issn"))
                             .pagine(riviste.getString("pagine"))
@@ -104,7 +115,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 convegni = st.executeQuery(ottieniRiferimenti[2]);
                 while (convegni.next()) {
                     autori = estraiLista(convegni.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(convegni.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(convegni.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(convegni.getString("id_riferimento"));
                     Convegno c = Convegno.builder()
                             .codice(convegni.getString("id_riferimento"))
@@ -114,7 +125,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(convegni.getString("descrizione"))
                             .lingua(convegni.getString("lingua"))
                             .tipo(convegni.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .doi(convegni.getString("doi"))
                             .luogo(convegni.getString("luogo"))
@@ -128,7 +139,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 film = st.executeQuery(ottieniRiferimenti[3]);
                 while (film.next()) {
                     autori = estraiLista(film.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(film.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(film.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(film.getString("id_riferimento"));
                     Film f = Film.builder()
                             .codice(film.getString("id_riferimento"))
@@ -138,7 +149,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(film.getString("descrizione"))
                             .lingua(film.getString("lingua"))
                             .tipo(film.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .isan(film.getString("isan"))
                             .genere(film.getString("genere"))
@@ -153,7 +164,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 giornali = st.executeQuery(ottieniRiferimenti[4]);
                 while (giornali.next()) {
                     autori = estraiLista(giornali.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(giornali.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(giornali.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(giornali.getString("id_riferimento"));
                     Giornale g = Giornale.builder()
                             .codice(giornali.getString("id_riferimento"))
@@ -163,7 +174,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(giornali.getString("descrizione"))
                             .lingua(giornali.getString("lingua"))
                             .tipo(giornali.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .issn(giornali.getString("issn"))
                             .testata(giornali.getString("testata"))
@@ -178,7 +189,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 podcast = st.executeQuery(ottieniRiferimenti[5]);
                 while (podcast.next()) {
                     autori = estraiLista(podcast.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(podcast.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(podcast.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(podcast.getString("id_riferimento"));
                     Podcast p = Podcast.build()
                             .codice(podcast.getString("id_riferimento"))
@@ -188,7 +199,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(podcast.getString("descrizione"))
                             .lingua(podcast.getString("lingua"))
                             .tipo(podcast.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .doi(podcast.getString("doi"))
                             .episodio(podcast.getString("episodio"))
@@ -205,7 +216,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 while (interviste.next()) {
                     autori = estraiLista(interviste.getString("autori"));
                     ospiti = estraiLista(interviste.getString("ospiti"));
-                    rimandi = ottieniRimandiRiferimento(interviste.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(interviste.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(interviste.getString("id_riferimento"));
                     Intervista i = Intervista.builder()
                             .codice(interviste.getString("id_riferimento"))
@@ -215,7 +226,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(interviste.getString("descrizione"))
                             .lingua(interviste.getString("lingua"))
                             .tipo(interviste.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .doi(interviste.getString("doi"))
                             .mezzo(interviste.getString("mezzo"))
@@ -230,7 +241,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 tesi = st.executeQuery(ottieniRiferimenti[7]);
                 while (tesi.next()) {
                     autori = estraiLista(tesi.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(tesi.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(tesi.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(tesi.getString("id_riferimento"));
                     Tesi t = Tesi.builder()
                             .codice(tesi.getString("id_riferimento"))
@@ -240,7 +251,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(tesi.getString("descrizione"))
                             .lingua(tesi.getString("lingua"))
                             .tipo(tesi.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .doi(tesi.getString("doi"))
                             .tipo(tesi.getString("tipo_tesi"))
@@ -255,7 +266,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 leggi = st.executeQuery(ottieniRiferimenti[8]);
                 while (leggi.next()) {
                     autori = estraiLista(leggi.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(leggi.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(leggi.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(leggi.getString("id_riferimento"));
                     Legge l = Legge.build()
                             .codice(leggi.getString("id_riferimento"))
@@ -265,7 +276,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(leggi.getString("descrizione"))
                             .lingua(leggi.getString("lingua"))
                             .tipo(leggi.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .numero(leggi.getString("numero"))
                             .tipo(leggi.getString("tipo_legge"))
@@ -280,7 +291,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 web = st.executeQuery(ottieniRiferimenti[9]);
                 while (web.next()) {
                     autori = estraiLista(web.getString("autori"));
-                    rimandi = ottieniRimandiRiferimento(web.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(web.getString("id_riferimento"));
                     tags = ottieniTagsRiferimento(web.getString("id_riferimento"));
                     Web w = Web.builder()
                             .codice(web.getString("id_riferimento"))
@@ -290,7 +301,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .descrizione(web.getString("descrizione"))
                             .lingua(web.getString("lingua"))
                             .tipo(web.getString("tipo"))
-                            .rimandi(rimandi)
+                            .citazioni(citazioni)
                             .tags(tags)
                             .url(web.getString("url"))
                             .sito(web.getString("sito"))
@@ -321,7 +332,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
         return tags;
     }
 
-    public ArrayList<Riferimento> ottieniRimandiRiferimento(String riferimento_id) {
+    public ArrayList<Riferimento> ottieniCitazioniRiferimento(String riferimento_id) {
         ArrayList<Riferimento> rimandi = new ArrayList<Riferimento>();
         try {
             Statement st = connection.createStatement();
@@ -350,7 +361,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
             Categoria c = new Categoria.Builder()
                     .setCodice(rs.getString("categoria_id"))
                     .setNome(rs.getString("nome"))
-                    .setPadre(rs.getString("supercategoria_id"))
+                    .setSupercategoria(rs.getString("supercategoria_id"))
                     .build();
             categorie.add(c);
         }

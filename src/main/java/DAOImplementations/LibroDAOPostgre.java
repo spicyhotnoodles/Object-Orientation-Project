@@ -17,7 +17,7 @@ public class LibroDAOPostgre implements LibroDAO {
         inserisciLibro = new String[6];
         modificaLibro = new String[2];
         inserisciLibro[0] = "insert into riferimento values (default, ?, ?, ?, ?, ?, cast(? as tipologia));";
-        inserisciLibro[1] = "select currval('riferimento_id_riferimento_seq');";
+        inserisciLibro[1] = "select currval('riferimento_riferimento_id_seq');";
         inserisciLibro[2] = "insert into libro values (?, ?, ?, ?, ?)";
         inserisciLibro[3] = "insert into catalogo values (default, ?, ?);";
         inserisciLibro[4] = "insert into citazione values (default, ?. ?);";
@@ -49,9 +49,9 @@ public class LibroDAOPostgre implements LibroDAO {
                     ps = connection.prepareStatement(inserisciLibro[2]);
                     ps.setString(1, libro.getIsbn());
                     ps.setString(2, libro.getPagine());
-                    ps.setInt(3, Integer.parseInt(rs.getString("currval")));
-                    ps.setString(4, libro.getSerie());
-                    ps.setString(5, libro.getVolume());
+                    ps.setString(3, libro.getSerie());
+                    ps.setString(4, libro.getVolume());
+                    ps.setInt(5, Integer.parseInt(rs.getString("currval")));
                     ps.executeUpdate();
                     connection.commit();
                 }

@@ -59,15 +59,14 @@ create type tipologia as enum (
 )
 
 create table riferimento (
-    id_riferimento serial primary key,
-    titolo varchar(200),
+    riferimento_id serial primary key,
+    titolo varchar(200) unique,
     autori varchar(500),
     data_pub varchar(15),
     descrizione varchar(1000),
     lingua varchar(200),
     note varchar(2000),
     tipo tipologia
-    -- Vincoli intrarelazionali
 )
 
 create table libro (
@@ -171,10 +170,10 @@ create table tag (
 -- La tabella `categoria` contiene tutte le categorie create dall'utente
 
 create table categoria (
-    id_categoria serial primary key,
+    categoria_id serial primary key,
     nome varchar(100) unique,
     supercategoria_id int,
-    constraint antenato foreign key (supercategoria_id) references Categoria(id_categoria) on delete cascade
+    constraint antenato foreign key (supercategoria_id) references Categoria(categoria_id) on delete cascade
 )
 
 -- La tabella `catalogo` codifica la relazione * a * tra `riferimento` e `categoria`. Consente di risalire alla categoria di ciascun riferimento, oppure di verificare quali riferimenti appartengono ad una data categoria.

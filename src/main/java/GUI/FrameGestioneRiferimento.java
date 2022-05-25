@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class FrameGestioneRiferimento extends JFrame {
     private JPanel mainPanel;
@@ -567,6 +568,29 @@ public class FrameGestioneRiferimento extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 String s = autoriTextField.getText();
                 ArrayList<String> autori = new ArrayList<>(Arrays.asList(s.split(";")));
+                ArrayList<String> tags = new ArrayList<>();
+                ArrayList<Riferimento> citazioni = new ArrayList<>();
+                ArrayList<Categoria> categorie = new ArrayList<>();
+                if (!tagDLM.isEmpty()) {
+                    for (int i = 0; i < tagDLM.getSize(); i++)
+                        tags.add((String) tagDLM.getElementAt(i));
+                }
+                if (!categoriaDLM.isEmpty()) {
+                    for (int i = 0; i < categoriaDLM.getSize(); i++) {
+                        for (Categoria c: c.getCategorie()) {
+                            if (c.getNome().equals(categoriaDLM.getElementAt(i)))
+                                categorie.add(c);
+                        }
+                    }
+                }
+                if (!rimandiDLM.isEmpty()) {
+                    for (int i = 0; i < rimandiDLM.getSize(); i++) {
+                        for (Riferimento r: c.getRiferimenti()) {
+                            if (r.getTitolo().equals(rimandiDLM.getElementAt(i)))
+                                citazioni.add(r);
+                        }
+                    }
+                }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Libro")) {
                     Libro libro = new Libro.Builder()
                             .titolo(titoloTextField.getText())
@@ -579,6 +603,9 @@ public class FrameGestioneRiferimento extends JFrame {
                             .serie(serieTextField.getText())
                             .volume(volumeTextField.getText())
                             .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .tags(tags)
+                            .categorie(categorie)
+                            .citazioni(citazioni)
                             .build();
                     try {
                         c.creaRiferimento(libro);

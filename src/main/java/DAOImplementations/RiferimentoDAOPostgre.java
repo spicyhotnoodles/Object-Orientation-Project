@@ -90,10 +90,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 riviste = st.executeQuery(ottieniRiferimenti[1]);
                 while (riviste.next()) {
                     autori = estraiLista(riviste.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(riviste.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(riviste.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(riviste.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(riviste.getString("riferimento_id"));
                     Rivista r = Rivista.builder()
-                            .codice(riviste.getString("id_riferimento"))
+                            .codice(riviste.getString("riferimento_id"))
                             .titolo(riviste.getString("titolo"))
                             .autori(autori)
                             .data(riviste.getString("data_pub"))
@@ -115,10 +115,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 convegni = st.executeQuery(ottieniRiferimenti[2]);
                 while (convegni.next()) {
                     autori = estraiLista(convegni.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(convegni.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(convegni.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(convegni.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(convegni.getString("riferimento_id"));
                     Convegno c = Convegno.builder()
-                            .codice(convegni.getString("id_riferimento"))
+                            .codice(convegni.getString("riferimento_id"))
                             .titolo(convegni.getString("titolo"))
                             .autori(autori)
                             .data(convegni.getString("data_pub"))
@@ -139,10 +139,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 film = st.executeQuery(ottieniRiferimenti[3]);
                 while (film.next()) {
                     autori = estraiLista(film.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(film.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(film.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(film.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(film.getString("riferimento_id"));
                     Film f = Film.builder()
-                            .codice(film.getString("id_riferimento"))
+                            .codice(film.getString("riferimento_id"))
                             .titolo(film.getString("titolo"))
                             .autori(autori)
                             .data(film.getString("data_pub"))
@@ -164,10 +164,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 giornali = st.executeQuery(ottieniRiferimenti[4]);
                 while (giornali.next()) {
                     autori = estraiLista(giornali.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(giornali.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(giornali.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(giornali.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(giornali.getString("riferimento_id"));
                     Giornale g = Giornale.builder()
-                            .codice(giornali.getString("id_riferimento"))
+                            .codice(giornali.getString("riferimento_id"))
                             .titolo(giornali.getString("titolo"))
                             .autori(autori)
                             .data(giornali.getString("data_pub"))
@@ -189,10 +189,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 podcast = st.executeQuery(ottieniRiferimenti[5]);
                 while (podcast.next()) {
                     autori = estraiLista(podcast.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(podcast.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(podcast.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(podcast.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(podcast.getString("riferimento_id"));
                     Podcast p = Podcast.build()
-                            .codice(podcast.getString("id_riferimento"))
+                            .codice(podcast.getString("riferimento_id"))
                             .titolo(podcast.getString("titolo"))
                             .autori(autori)
                             .data(podcast.getString("data_pub"))
@@ -216,10 +216,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 while (interviste.next()) {
                     autori = estraiLista(interviste.getString("autori"));
                     ospiti = estraiLista(interviste.getString("ospiti"));
-                    citazioni = ottieniCitazioniRiferimento(interviste.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(interviste.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(interviste.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(interviste.getString("riferimento_id"));
                     Intervista i = Intervista.builder()
-                            .codice(interviste.getString("id_riferimento"))
+                            .codice(interviste.getString("riferimento_id"))
                             .titolo(interviste.getString("titolo"))
                             .autori(autori)
                             .data(interviste.getString("data_pub"))
@@ -241,10 +241,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 tesi = st.executeQuery(ottieniRiferimenti[7]);
                 while (tesi.next()) {
                     autori = estraiLista(tesi.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(tesi.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(tesi.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(tesi.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(tesi.getString("riferimento_id"));
                     Tesi t = Tesi.builder()
-                            .codice(tesi.getString("id_riferimento"))
+                            .codice(tesi.getString("riferimento_id"))
                             .titolo(tesi.getString("titolo"))
                             .autori(autori)
                             .data(tesi.getString("data_pub"))
@@ -266,10 +266,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 leggi = st.executeQuery(ottieniRiferimenti[8]);
                 while (leggi.next()) {
                     autori = estraiLista(leggi.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(leggi.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(leggi.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(leggi.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(leggi.getString("riferimento_id"));
                     Legge l = Legge.build()
-                            .codice(leggi.getString("id_riferimento"))
+                            .codice(leggi.getString("riferimento_id"))
                             .titolo(leggi.getString("titolo"))
                             .autori(autori)
                             .data(leggi.getString("data_pub"))
@@ -291,10 +291,10 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                 web = st.executeQuery(ottieniRiferimenti[9]);
                 while (web.next()) {
                     autori = estraiLista(web.getString("autori"));
-                    citazioni = ottieniCitazioniRiferimento(web.getString("id_riferimento"));
-                    tags = ottieniTagsRiferimento(web.getString("id_riferimento"));
+                    citazioni = ottieniCitazioniRiferimento(web.getString("riferimento_id"));
+                    tags = ottieniTagsRiferimento(web.getString("riferimento_id"));
                     Web w = Web.builder()
-                            .codice(web.getString("id_riferimento"))
+                            .codice(web.getString("riferimento_id"))
                             .titolo(web.getString("titolo"))
                             .autori(autori)
                             .data(web.getString("data_pub"))

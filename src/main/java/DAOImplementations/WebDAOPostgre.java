@@ -15,7 +15,7 @@ public class WebDAOPostgre implements WebDAO {
         this.connection = connection;
         inserisciWeb = new String[3];
         inserisciWeb[0] = "insert into riferimento values (default, ?, ?, ?, ?, ?, ?, cast(? as tipologia));";
-        inserisciWeb[1] = "select currval('riferimento_id_riferimento_seq');";
+        inserisciWeb[1] = "select currval('riferimento_riferimento_id_seq');";
         inserisciWeb[2] = "insert into web values (?, ?, ?, ?)";
     }
 

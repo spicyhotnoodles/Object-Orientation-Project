@@ -26,7 +26,6 @@ public class Controller {
     private CategoriaDAOPostgre categoriaDAO;
     private CitazioneDAOPostgre citazioneDAO;
     private RiferimentoDAOPostgre riferimentoDAO;
-    private SottocategoriaDAOPostgre sottocategoriaDAO;
     private LibroDAOPostgre libroPostgre;
     private ConvegnoDAOPostgre convegnoPostgre;
     private FilmDAOPostgre filmPostgre;
@@ -78,7 +77,6 @@ public class Controller {
             rivistaPostgre = new RivistaDAOPostgre(connection);
             tesiPostgre = new TesiDAOPostgre(connection);
             webPostgre = new WebDAOPostgre(connection);
-            sottocategoriaDAO = new SottocategoriaDAOPostgre(connection);
             tagDAO = new TagDAOPostgre(connection);
         }
         catch (SQLException e) { //catch (SQLException | ConnectionException e) {
@@ -90,6 +88,7 @@ public class Controller {
         if (riferimento instanceof Libro) {
             Libro l = (Libro) riferimento;
             l.setCodice(libroPostgre.inserisciLibro(l));
+            riferimenti.add(l);
         }
         if (riferimento instanceof Convegno) {
             Convegno c = (Convegno) riferimento;

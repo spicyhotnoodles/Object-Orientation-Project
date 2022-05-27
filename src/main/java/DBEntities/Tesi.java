@@ -30,7 +30,7 @@ public class Tesi extends Riferimento {
             return this;
         }
 
-        public Builder tipo(String tipo) {
+        public Builder tipoTesi(String tipo) {
             this.tipoTesi = tipo;
             return this;
         }

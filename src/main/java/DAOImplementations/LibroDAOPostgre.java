@@ -20,7 +20,7 @@ public class LibroDAOPostgre implements LibroDAO {
         inserisciLibro[1] = "select currval('riferimento_riferimento_id_seq');";
         inserisciLibro[2] = "insert into libro values (?, ?, ?, ?, ?)";
         inserisciLibro[3] = "insert into catalogo values (default, ?, ?);";
-        inserisciLibro[4] = "insert into citazione values (default, ?. ?);";
+        inserisciLibro[4] = "insert into citazione values (default, ?, ?);";
         inserisciLibro[5] = "insert into tags values (default, ?, ?);";
         modificaLibro[0] = "update riferimento set titolo=?, autori=?, data_pub=?, descrizione=?, lingua=? where riferimento_id = cast(? as int);";
         modificaLibro[1] = "update libro set isbn=?, pagine=?, serie=?, volume=? where riferimento_id = cast(? as int);";

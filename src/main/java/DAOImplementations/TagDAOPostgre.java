@@ -10,6 +10,8 @@ public class TagDAOPostgre implements TagDAO {
     Statement ottieniTags;
     PreparedStatement eliminaTag;
     PreparedStatement creaTag;
+    PreparedStatement legaRiferimento;
+    PreparedStatement slegaRiferimento;
 
 
     public TagDAOPostgre(Connection connection) {
@@ -20,7 +22,7 @@ public class TagDAOPostgre implements TagDAO {
     public ArrayList<String> ottieniTags() throws SQLException {
         ArrayList<String> tags = new ArrayList<>();
         ottieniTags = connection.createStatement();
-        ResultSet rs = ottieniTags.executeQuery("select parola from tag");
+        ResultSet rs = ottieniTags.executeQuery("select distinct parola from tag");
         while (rs.next()) {
             tags.add(rs.getString("parola"));
         }
@@ -36,7 +38,17 @@ public class TagDAOPostgre implements TagDAO {
 
     @Override
     public void legaRiferimento(String riferimento_id, String tag) throws SQLException {
+        legaRiferimento = connection.prepareStatement("insert into tag values (default, ?, cast(? as int))");
+        legaRiferimento.setString(1, tag);
+        legaRiferimento.setString(2, riferimento_id);
+        legaRiferimento.executeUpdate();
+    }
 
+    public void slegaRiferimento(String riferimento_id, String tag) throws SQLException {
+        slegaRiferimento = connection.prepareStatement("delete from tag where riferimento_id = cast(? as int) and parola = ?");
+        slegaRiferimento.setString(1, riferimento_id);
+        slegaRiferimento.setString(2, tag);
+        slegaRiferimento.executeUpdate();
     }
 
     public void eliminaTag(String tag) throws SQLException {

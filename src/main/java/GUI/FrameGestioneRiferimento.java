@@ -163,12 +163,15 @@ public class FrameGestioneRiferimento extends JFrame {
     }
 
     public void mostraRiferimento(Riferimento riferimento, DefaultTableModel model, int index) {
-        for (String tag : riferimento.getTags())
-            tagDLM.addElement(tag);
-        for (Categoria cat : riferimento.getCategorie())
-            categoriaDLM.addElement(cat.getNome());
-        for (Riferimento rif: riferimento.getCitazioni())
-            rimandiDLM.addElement(rif.getTitolo());
+        if (riferimento.getTags() != null)
+            for (String tag : riferimento.getTags())
+                tagDLM.addElement(tag);
+        if (riferimento.getCategorie() != null)
+            for (Categoria cat : riferimento.getCategorie())
+                categoriaDLM.addElement(cat.getNome());
+        if (riferimento.getCitazioni() != null)
+            for (Riferimento rif: riferimento.getCitazioni())
+                rimandiDLM.addElement(rif.getTitolo());
         aggiungiCatRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -208,7 +211,6 @@ public class FrameGestioneRiferimento extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    System.out.println(aggiungiCitazioniRifComboBox.getSelectedItem().toString());
                     c.aggiungiCitazione(riferimento.getCodice(), aggiungiCitazioniRifComboBox.getSelectedItem().toString());
                     JOptionPane.showMessageDialog(mainPanel, "Riferimenti associati", "Successo!", JOptionPane.INFORMATION_MESSAGE);
                     for (int i = 0; i < model.getRowCount(); i++) {
@@ -220,7 +222,7 @@ public class FrameGestioneRiferimento extends JFrame {
                             break;
                         }
                     }
-                    rimandiDLM.addElement(citazioniRifList.getSelectedValue());
+                    rimandiDLM.addElement(aggiungiCitazioniRifComboBox.getSelectedItem().toString());
 
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
@@ -230,19 +232,46 @@ public class FrameGestioneRiferimento extends JFrame {
         rimuoviCitazioneRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                try {
+                    c.rimuoviCitazione(riferimento.getCodice(), citazioniRifList.getSelectedValue().toString());
+                    JOptionPane.showMessageDialog(mainPanel, "Citazione rimossa", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        if (model.getValueAt(i, 0).toString().equals(citazioniRifList.getSelectedValue().toString())) {
+                            String s = (model.getValueAt(i, 5)).toString();
+                            int value = Integer.parseInt(s);
+                            value = value - 1;
+                            model.setValueAt(value, i, 5);
+                            break;
+                        }
+                    }
+                    rimandiDLM.removeElement(citazioniRifList.getSelectedValue());
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         aggiungiTagRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                try {
+                    c.aggiungiTag(riferimento.getCodice(), aggiungiTagComboBox.getSelectedItem().toString());
+                    JOptionPane.showMessageDialog(mainPanel, "Tag associato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    tagDLM.addElement(aggiungiTagComboBox.getSelectedItem().toString());
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         rimuoviTagRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                try {
+                    c.rimuoviTag(riferimento.getCodice(), tagRifList.getSelectedValue().toString());
+                    JOptionPane.showMessageDialog(mainPanel, "Tag rimosso", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    tagDLM.removeElement(tagRifList.getSelectedValue().toString());
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         //Il pulsante salva richiama il metodo Controller.modificaRiferimento(Riferimento r)
@@ -423,6 +452,39 @@ public class FrameGestioneRiferimento extends JFrame {
                         JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                     }
                 }
+                // Aggiorna le categorie
+                if (riferimento.getCategorie() != null)
+                    riferimento.getCategorie().clear();
+                for (int i = 0; i < categoriaDLM.getSize(); i++) {
+                    for (Categoria c: c.getCategorie()) {
+                        if (c.getNome().equals(categoriaDLM.getElementAt(i)))
+                            riferimento.getCategorie().add(c);
+                    }
+                }
+                // Aggiorna le citazioni
+                if (riferimento.getCitazioni() != null)
+                    riferimento.getCitazioni().clear();
+                for (int i = 0; i < rimandiDLM.getSize(); i++) {
+                    for (Riferimento r: c.getRiferimenti()) {
+                        if (r.getTitolo().equals(rimandiDLM.getElementAt(i)))
+                            riferimento.getCitazioni().add(r);
+                    }
+                }
+                //Aggiorna i tags
+                if (riferimento.getTags() != null)
+                    riferimento.getTags().clear();
+                for (int i = 0; i < tagDLM.getSize(); i++) {
+                    for (String tag: c.getTags()) {
+                        if (tag.equals(tagDLM.getElementAt(i)))
+                            riferimento.getTags().add(tag);
+                    }
+                }
+                model.setValueAt(titoloTextField.getText(), index, 0);
+                model.setValueAt(autoriTextField.getText(), index, 1);
+                model.setValueAt(tipoRiferimentoComboBox.getSelectedItem(), index, 2);
+                model.setValueAt(annoTextField.getText(), index, 3);
+                model.setValueAt(linguaTextField.getText(), index, 4);
+                dispose();
             }
         });
         tipoRiferimentoComboBox.setEnabled(false);
@@ -448,7 +510,7 @@ public class FrameGestioneRiferimento extends JFrame {
             tipoRiferimentoComboBox.setSelectedIndex(1);
             Convegno convegno = (Convegno) riferimento;
             doiTextField.setText(convegno.getDoi());
-            luogoTextField.setText(convegno.getDoi());
+            luogoTextField.setText(convegno.getLuogo());
         }
         if (riferimento instanceof Rivista) {
             mostraAttributiRivista();
@@ -609,6 +671,7 @@ public class FrameGestioneRiferimento extends JFrame {
                             .build();
                     try {
                         c.creaRiferimento(libro);
+                        c.getRiferimenti().add(libro);
                         JOptionPane.showMessageDialog(mainPanel, "Libro creato.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
                     } catch (SQLException e) {
                         JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
@@ -620,40 +683,204 @@ public class FrameGestioneRiferimento extends JFrame {
                             .autori(autori)
                             .descrizione(descrizioneTextField.getText())
                             .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
                             .data(annoTextField.getText())
                             .doi(doiTextField.getText())
                             .luogo(luogoTextField.getText())
                             .build();
                     try {
                         c.creaRiferimento(convegno);
+                        c.getRiferimenti().add(convegno);
                         JOptionPane.showMessageDialog(mainPanel, "Atto di convegno creato.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
                     } catch (SQLException e) {
                         JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Articolo di rivista")) {
-
+                    Rivista rivista = new Rivista.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .issn(issnTextField.getText())
+                            .pagine(pagineTextField.getText())
+                            .fascicolo(fascicoloTextField.getText())
+                            .build();
+                    try {
+                        c.creaRiferimento(rivista);
+                        c.getRiferimenti().add(rivista);
+                        JOptionPane.showMessageDialog(mainPanel, "Articolo di rivista creato.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Articolo di giornale")) {
-
+                    Giornale giornale = new Giornale.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .issn(issnTextField.getText())
+                            .testata(testataTextField.getText())
+                            .sezione(sezioneTextField.getText())
+                            .build();
+                    try {
+                        c.creaRiferimento(giornale);
+                        c.getRiferimenti().add(giornale);
+                        JOptionPane.showMessageDialog(mainPanel, "Articolo di giornale creato.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Legge")) {
-
+                    Legge legge = new Legge.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .numero(numeroTextField.getText())
+                            .tipoLegge(tipoTextField.getText())
+                            .codiceLegge(codiceTextField.getText())
+                            .build();
+                    try {
+                        c.creaRiferimento(legge);
+                        c.getRiferimenti().add(legge);
+                        JOptionPane.showMessageDialog(mainPanel, "Legge creata.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Tesi")) {
-
+                    Tesi tesi = new Tesi.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .doi(doiTextField.getText())
+                            .ateneo(ateneoTextField.getText())
+                            .tipoTesi(tipoTextField.getText())
+                            .build();
+                    try {
+                        c.creaRiferimento(tesi);
+                        c.getRiferimenti().add(tesi);
+                        JOptionPane.showMessageDialog(mainPanel, "Tesi creata.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Sito web")) {
-
+                    Web web = new Web.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .url(urlTextField.getText())
+                            .sito(sitoTextField.getText())
+                            .tipoSito(tipoTextField.getText())
+                            .build();
+                    try {
+                        c.creaRiferimento(web);
+                        c.getRiferimenti().add(web);
+                        JOptionPane.showMessageDialog(mainPanel, "Sito web creato.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Intervista")) {
-
+                    String o = ospitiTextField.getText();
+                    ArrayList<String> ospiti = new ArrayList<>(Arrays.asList(o.split(";")));
+                    Intervista intervista = new Intervista.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .doi(doiTextField.getText())
+                            .mezzo(mezzoTextField.getText())
+                            .ospiti(ospiti)
+                            .build();
+                    try {
+                        c.creaRiferimento(intervista);
+                        c.getRiferimenti().add(intervista);
+                        JOptionPane.showMessageDialog(mainPanel, "Intervista creata.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Podcast")) {
-
+                    Podcast podcast = new Podcast.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .doi(doiTextField.getText())
+                            .episodio(episodioTextField.getText())
+                            .serie(serieTextField.getText())
+                            .build();
+                    try {
+                        c.creaRiferimento(podcast);
+                        c.getRiferimenti().add(podcast);
+                        JOptionPane.showMessageDialog(mainPanel, "Podcast creato.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 if (tipoRiferimentoComboBox.getSelectedItem().equals("Film")) {
-
+                    Film film = new Film.Builder()
+                            .titolo(titoloTextField.getText())
+                            .autori(autori)
+                            .descrizione(descrizioneTextField.getText())
+                            .lingua(linguaTextField.getText())
+                            .tipo(tipoRiferimentoComboBox.getSelectedItem().toString())
+                            .data(annoTextField.getText())
+                            .categorie(categorie)
+                            .tags(tags)
+                            .citazioni(citazioni)
+                            .isan(isanTextField.getText())
+                            .genere(genereTextField.getText())
+                            .distribuzione(distribuzioneTextField.getText())
+                            .build();
+                    try {
+                        c.creaRiferimento(film);
+                        c.getRiferimenti().add(film);
+                        JOptionPane.showMessageDialog(mainPanel, "Film creato.", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 model.addRow(new Object[]{titoloTextField.getText(), autoriTextField.getText(), tipoRiferimentoComboBox.getSelectedItem(), annoTextField.getText(), linguaTextField.getText(), 0, "", ""});
                 dispose();

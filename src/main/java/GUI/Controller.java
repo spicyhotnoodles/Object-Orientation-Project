@@ -194,6 +194,20 @@ public class Controller {
                 citazioneDAO.associaRiferimento(riferimento_id, riferimento.getCodice());
     }
 
+    public void rimuoviCitazione(String riferimento_id, String menzionato) throws SQLException {
+        for (Riferimento riferimento: riferimenti)
+            if (riferimento.getTitolo().equals(menzionato))
+                citazioneDAO.disassociaRiferimento(riferimento_id, riferimento.getCodice());
+    }
+
+    public void aggiungiTag(String riferimento_id, String tag) throws SQLException {
+        tagDAO.legaRiferimento(riferimento_id, tag);
+    }
+
+    public void rimuoviTag(String riferimento_id, String tag) throws SQLException {
+        tagDAO.slegaRiferimento(riferimento_id, tag);
+    }
+
     public void creaCategoria(Categoria categoria) throws SQLException {
         categoria.setCodice(categoriaDAO.creaCategoria(categoria));
         categorie.add(categoria);

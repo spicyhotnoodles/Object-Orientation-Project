@@ -208,10 +208,12 @@ public class FrameTabellaRiferimenti extends JFrame {
             String categorie = "";
             for (String autore: r.getAutori())
                 autori = autori + autore + "; ";
-            for (Categoria categoria: r.getCategorie())
-                categorie = categorie + categoria.getNome() + "; ";
-            for (String tag: r.getTags())
-                tags = tags + r.getTags() + "; ";
+            if (r.getCategorie() != null)
+                for (Categoria categoria: r.getCategorie())
+                    categorie = categorie + categoria.getNome() + "; ";
+            if (r.getTags() != null)
+                for (String tag: r.getTags())
+                    tags = tags + r.getTags() + "; ";
             model.addRow(new Object[]{r.getTitolo(), autori, r.getTipo(), r.getData(), r.getLingua(), r.getRimandi(), tags, categorie});
         }
     }

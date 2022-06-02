@@ -23,7 +23,7 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
         ottieniRiferimenti[4] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), issn, testata, sezione from riferimento as r inner join giornale as g on r.riferimento_id = g.riferimento_id"; //ottieni giornali
         ottieniRiferimenti[5] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, episodio, serie from riferimento as r inner join podcast as p on r.riferimento_id = p.riferimento_id"; //ottieni podcast
         ottieniRiferimenti[6] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, mezzo, ospiti from riferimento as r inner join intervista as i on r.riferimento_id = i.riferimento_id"; //ottieni interviste
-        ottieniRiferimenti[7] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, tipo, ateneo from riferimento as r inner join tesi as t on r.riferimento_id = t.riferimento_id"; //ottieni tesi
+        ottieniRiferimenti[7] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), doi, tipo_tesi, ateneo from riferimento as r inner join tesi as t on r.riferimento_id = t.riferimento_id"; //ottieni tesi
         ottieniRiferimenti[8] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), numero, tipo_legge, codice from riferimento as r inner join legge as l on r.riferimento_id = l.riferimento_id"; //ottieni leggi
         ottieniRiferimenti[9] = "select r.riferimento_id, titolo, autori, data_pub, descrizione, lingua, cast(tipo as varchar), url, sito, tipo_sito from riferimento as r inner join web as w on r.riferimento_id = w.riferimento_id"; //ottieni web
     }
@@ -279,8 +279,8 @@ public class RiferimentoDAOPostgre implements RiferimentoDAO {
                             .citazioni(citazioni)
                             .tags(tags)
                             .numero(leggi.getString("numero"))
-                            .tipo(leggi.getString("tipo_legge"))
-                            .codice(leggi.getString("codice"))
+                            .tipoLegge(leggi.getString("tipo_legge"))
+                            .codiceLegge(leggi.getString("codice"))
                             .build();
                     riferimenti.add(l);
                 }

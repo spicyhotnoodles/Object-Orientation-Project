@@ -65,7 +65,6 @@ create table riferimento (
     data_pub varchar(15),
     descrizione varchar(1000),
     lingua varchar(200),
-    note varchar(2000),
     tipo tipologia
 )
 

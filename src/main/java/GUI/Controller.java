@@ -104,7 +104,7 @@ public class Controller {
         }
         if (riferimento instanceof Intervista) {
             Intervista i = (Intervista) riferimento;
-            i.setCodice(intervistaPostgre.inserisciRivista(i));
+            i.setCodice(intervistaPostgre.inserisciIntervista(i));
         }
         if (riferimento instanceof Legge) {
             Legge l = (Legge) riferimento;

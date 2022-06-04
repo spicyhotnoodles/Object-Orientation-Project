@@ -28,10 +28,10 @@ public class CitazioneDAOPostgre implements CitazioneDAO {
     }
 
     @Override
-    public void disassociaRiferimento(String riferimento_id, String categoria_id) throws SQLException {
+    public void disassociaRiferimento(String riferimento_id, String menzionato_id) throws SQLException {
         disassociaRiferimento = connection.prepareStatement("delete from citazione where riferimento_id = cast(? as int) and menzionato_id = cast(? as int)");
         disassociaRiferimento.setString(1, riferimento_id);
-        disassociaRiferimento.setString(2, riferimento_id);
+        disassociaRiferimento.setString(2, menzionato_id);
         disassociaRiferimento.executeUpdate();
     }
 }

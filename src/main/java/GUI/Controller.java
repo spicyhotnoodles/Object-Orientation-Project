@@ -196,8 +196,10 @@ public class Controller {
 
     public void rimuoviCitazione(String riferimento_id, String menzionato) throws SQLException {
         for (Riferimento riferimento: riferimenti)
-            if (riferimento.getTitolo().equals(menzionato))
+            if (riferimento.getTitolo().equals(menzionato)) {
                 citazioneDAO.disassociaRiferimento(riferimento_id, riferimento.getCodice());
+                break;
+            }
     }
 
     public void aggiungiTag(String riferimento_id, String tag) throws SQLException {

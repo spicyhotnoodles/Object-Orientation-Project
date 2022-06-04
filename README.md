@@ -122,7 +122,6 @@ create table film (
     distribuzione varchar(200),
     riferimento_id int,
     constraint riferimento_film foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade
-    
 )
 
 create table intervista (

@@ -18,6 +18,6 @@
     <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-swing:12.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-core:12.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-materialdesign-pack:12.3.0" level="project" />
-    <orderEntry type="library" name="postgresql-42.3.6" level="application" />
+    <orderEntry type="library" name="postgresql-42.3.6" level="project" />
   </component>
 </module>

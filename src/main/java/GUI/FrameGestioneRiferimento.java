@@ -175,55 +175,72 @@ public class FrameGestioneRiferimento extends JFrame {
         aggiungiCatRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                for (Categoria cat: c.getCategorie()) {
-                    if (cat.getNome().equals(aggiungiCategoriaComboBox.getSelectedItem().toString())) {
-                        try {
-                            c.aggiungiAlCatalogo(riferimento.getCodice(), cat.getCodice());
-                            JOptionPane.showMessageDialog(mainPanel, "Il riferimento è stato assegnato alla categoria selezionata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                            categoriaDLM.addElement(aggiungiCategoriaComboBox.getSelectedItem().toString());
-                        } catch (SQLException e) {
-                            JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                if (!categoriaDLM.contains(aggiungiCategoriaComboBox.getSelectedItem().toString()))
+                    for (Categoria cat: c.getCategorie()) {
+                        if (cat.getNome().equals(aggiungiCategoriaComboBox.getSelectedItem().toString())) {
+                            try {
+                                c.aggiungiAlCatalogo(riferimento.getCodice(), cat.getCodice());
+                                JOptionPane.showMessageDialog(mainPanel, "Il riferimento è stato assegnato alla categoria selezionata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                                riferimento.getCategorie().add(cat);
+                                categoriaDLM.addElement(aggiungiCategoriaComboBox.getSelectedItem().toString());
+                            } catch (SQLException e) {
+                                JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
                     }
-                }
+                else
+                    JOptionPane.showMessageDialog(mainPanel, "Il riferimento è già assegnato a questa categoria!", "Errore!", JOptionPane.ERROR_MESSAGE);
             }
         });
         rimuoviCategoriaRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                for (Categoria cat: riferimento.getCategorie()) {
-                    if (cat.getNome().equals(categoriaRifList.getSelectedValue().toString())) {
-                        try {
-                            c.rimuoviDalCatalogo(riferimento.getCodice(), cat.getCodice());
-                            JOptionPane.showMessageDialog(mainPanel, "Il riferimento è stato rimosso dalla categoria selezionata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                            c.getCategorie().remove(cat);
-                            riferimento.getCategorie().remove(cat);
-                            categoriaDLM.removeElement(categoriaRifList.getSelectedValue().toString());
-                        } catch (SQLException e) {
-                            JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                if (!categoriaRifList.isSelectionEmpty()) {
+                    for (Categoria cat : riferimento.getCategorie()) {
+                        if (cat.getNome().equals(categoriaRifList.getSelectedValue().toString())) {
+                            try {
+                                c.rimuoviDalCatalogo(riferimento.getCodice(), cat.getCodice());
+                                JOptionPane.showMessageDialog(mainPanel, "Il riferimento è stato rimosso dalla categoria selezionata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                                //c.getCategorie().remove(cat);
+                                riferimento.getCategorie().remove(cat);
+                                categoriaDLM.removeElement(categoriaRifList.getSelectedValue().toString());
+                            } catch (SQLException e) {
+                                JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
+                else
+                    JOptionPane.showMessageDialog(mainPanel, "Nessuna categoria selezionata!", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
         aggiungiCitazioneRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    c.aggiungiCitazione(riferimento.getCodice(), aggiungiCitazioniRifComboBox.getSelectedItem().toString());
-                    JOptionPane.showMessageDialog(mainPanel, "Riferimenti associati", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                    for (int i = 0; i < model.getRowCount(); i++) {
-                        if (model.getValueAt(i, 0).toString().equals(aggiungiCitazioniRifComboBox.getSelectedItem().toString())) {
-                            String s = (model.getValueAt(i, 5)).toString();
-                            int value = Integer.parseInt(s);
-                            value = value + 1;
-                            model.setValueAt(value, i, 5);
-                            break;
+                    if (!rimandiDLM.contains(aggiungiCitazioniRifComboBox.getSelectedItem().toString())) {
+                        c.aggiungiCitazione(riferimento.getCodice(), aggiungiCitazioniRifComboBox.getSelectedItem().toString());
+                        JOptionPane.showMessageDialog(mainPanel, "Riferimenti associati", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                        for (int i = 0; i < model.getRowCount(); i++) {
+                            if (model.getValueAt(i, 0).toString().equals(aggiungiCitazioniRifComboBox.getSelectedItem().toString())) {
+                                String s = (model.getValueAt(i, 5)).toString();
+                                int value = Integer.parseInt(s);
+                                value = value + 1;
+                                model.setValueAt(value, i, 5);
+                                break;
+                            }
                         }
+                        rimandiDLM.addElement(aggiungiCitazioniRifComboBox.getSelectedItem().toString());
+                        for (Riferimento r: c.getRiferimenti())
+                            if (r.getTitolo().equals(aggiungiCitazioniRifComboBox.getSelectedItem().toString())) {
+                                riferimento.getCitazioni().add(r);
+                                break;
+                            }
                     }
-                    rimandiDLM.addElement(aggiungiCitazioniRifComboBox.getSelectedItem().toString());
-
+                    else {
+                        JOptionPane.showMessageDialog(mainPanel, "Il riferimento contiene già questa citazione!", "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                 }
@@ -232,31 +249,45 @@ public class FrameGestioneRiferimento extends JFrame {
         rimuoviCitazioneRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    c.rimuoviCitazione(riferimento.getCodice(), citazioniRifList.getSelectedValue().toString());
-                    JOptionPane.showMessageDialog(mainPanel, "Citazione rimossa", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                    for (int i = 0; i < model.getRowCount(); i++) {
-                        if (model.getValueAt(i, 0).toString().equals(citazioniRifList.getSelectedValue().toString())) {
-                            String s = (model.getValueAt(i, 5)).toString();
-                            int value = Integer.parseInt(s);
-                            value = value - 1;
-                            model.setValueAt(value, i, 5);
-                            break;
+                if (!citazioniRifList.isSelectionEmpty()) {
+                    try {
+                        c.rimuoviCitazione(riferimento.getCodice(), citazioniRifList.getSelectedValue().toString());
+                        JOptionPane.showMessageDialog(mainPanel, "Citazione rimossa", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                        for (int i = 0; i < model.getRowCount(); i++) {
+                            if (model.getValueAt(i, 0).toString().equals(citazioniRifList.getSelectedValue().toString())) {
+                                String s = (model.getValueAt(i, 5)).toString();
+                                int value = Integer.parseInt(s);
+                                value = value - 1;
+                                model.setValueAt(value, i, 5);
+                                break;
+                            }
                         }
+                        for (Riferimento r: c.getRiferimenti())
+                            if (r.getTitolo().equals(aggiungiCitazioniRifComboBox.getSelectedItem().toString())) {
+                                riferimento.getCitazioni().remove(r);
+                                break;
+                            }
+                        rimandiDLM.removeElement(citazioniRifList.getSelectedValue());
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                     }
-                    rimandiDLM.removeElement(citazioniRifList.getSelectedValue());
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                 }
+                else
+                    JOptionPane.showMessageDialog(mainPanel, "Nessuna citazione selezionata!", "Errore!", JOptionPane.ERROR_MESSAGE);
             }
         });
         aggiungiTagRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    c.aggiungiTag(riferimento.getCodice(), aggiungiTagComboBox.getSelectedItem().toString());
-                    JOptionPane.showMessageDialog(mainPanel, "Tag associato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                    tagDLM.addElement(aggiungiTagComboBox.getSelectedItem().toString());
+                    if (!tagDLM.contains(aggiungiTagComboBox.getSelectedItem().toString())) {
+                        c.aggiungiTag(riferimento.getCodice(), aggiungiTagComboBox.getSelectedItem().toString());
+                        JOptionPane.showMessageDialog(mainPanel, "Tag associato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                        tagDLM.addElement(aggiungiTagComboBox.getSelectedItem().toString());
+                        riferimento.getTags().add(aggiungiTagComboBox.getSelectedItem().toString());
+                    }
+                    else
+                        JOptionPane.showMessageDialog(mainPanel, "Il riferimento è già associato a questo tag!", "Errore", JOptionPane.ERROR_MESSAGE);
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                 }
@@ -265,13 +296,18 @@ public class FrameGestioneRiferimento extends JFrame {
         rimuoviTagRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    c.rimuoviTag(riferimento.getCodice(), tagRifList.getSelectedValue().toString());
-                    JOptionPane.showMessageDialog(mainPanel, "Tag rimosso", "Successo!", JOptionPane.INFORMATION_MESSAGE);
-                    tagDLM.removeElement(tagRifList.getSelectedValue().toString());
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                if (!tagRifList.isSelectionEmpty()) {
+                    try {
+                        c.rimuoviTag(riferimento.getCodice(), tagRifList.getSelectedValue().toString());
+                        JOptionPane.showMessageDialog(mainPanel, "Tag rimosso", "Successo!", JOptionPane.INFORMATION_MESSAGE);
+                        tagDLM.removeElement(tagRifList.getSelectedValue().toString());
+                        riferimento.getTags().remove(aggiungiTagComboBox.getSelectedItem().toString());
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
+                else
+                    JOptionPane.showMessageDialog(mainPanel, "Nessun tag selezionato!", "Errore!", JOptionPane.ERROR_MESSAGE);
             }
         });
         //Il pulsante salva richiama il metodo Controller.modificaRiferimento(Riferimento r)
@@ -592,13 +628,14 @@ public class FrameGestioneRiferimento extends JFrame {
         aggiungiCatRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                //TODO
                 //Se c'è un errore è perché va prima creato un riferimento!
             }
         });
         rimuoviCategoriaRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                //TODO
             }
         });
         aggiungiTagRifButton.addActionListener(new ActionListener() {
@@ -610,19 +647,19 @@ public class FrameGestioneRiferimento extends JFrame {
         rimuoviTagRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                //TODO
             }
         });
         aggiungiCitazioneRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                //TODO
             }
         });
         rimuoviCitazioneRifButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                //TODO
             }
         });
         salvaButton.addActionListener(new ActionListener() {

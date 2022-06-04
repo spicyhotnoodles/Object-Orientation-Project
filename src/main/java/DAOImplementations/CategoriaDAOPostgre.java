@@ -34,7 +34,7 @@ public class CategoriaDAOPostgre implements CategoriaDAO {
         }
         creaCategoria.executeUpdate();
         Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery("select currval('categoria_id_categoria_seq')");
+        ResultSet rs = st.executeQuery("select currval('categoria_categoria_id_seq')");
         if (rs.next())
             id = rs.getString("currval");
         return id;

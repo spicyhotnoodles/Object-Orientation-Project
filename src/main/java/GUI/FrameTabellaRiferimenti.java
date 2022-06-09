@@ -180,6 +180,10 @@ public class FrameTabellaRiferimenti extends JFrame {
                 if (JOptionPane.showConfirmDialog(mainPanel, "Eliminare il tag selezionato?") == JOptionPane.YES_OPTION) {
                     try {
                         c.eliminaTag(tagList.getSelectedValue().toString());
+                        for (Riferimento rif : c.getRiferimenti()) {
+                            if (rif.getTags().contains(tagList.getSelectedValue().toString()))
+                                rif.getTags().remove(tagList.getSelectedValue().toString());
+                        }
                         JOptionPane.showMessageDialog(mainPanel, "Tag eliminato", "Successo!", JOptionPane.INFORMATION_MESSAGE);
                         tagLM.remove(tagList.getSelectedIndex());
                     } catch (SQLException e) {

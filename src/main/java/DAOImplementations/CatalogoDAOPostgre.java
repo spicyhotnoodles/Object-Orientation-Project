@@ -73,7 +73,7 @@ public class CatalogoDAOPostgre implements CatalogoDAO {
     @Override
     public void aggiungiAlCatalogo(String riferimento_id, String categoria_id) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("select supercategoria_id from categoria where categoria_id = cast(? as int)");
-        String s = "insert into catalogo values (default, cast(? as int), cast(? as int)) on conflict (categoria_id) do nothing"; //poiché è impossibile associare lo stesso riferimento più volte alla stessa categoria (unique), se viene violato il vincolo, l'inserimento viene ignorato
+        String s = "insert into catalogo values (default, cast(? as int), cast(? as int))"; //on conflict (categoria_id) do nothing poiché è impossibile associare lo stesso riferimento più volte alla stessa categoria (unique), se viene violato il vincolo, l'inserimento viene ignorato
         ps.setString(1, categoria_id);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {

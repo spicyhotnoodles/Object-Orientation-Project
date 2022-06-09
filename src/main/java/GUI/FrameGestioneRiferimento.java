@@ -182,7 +182,23 @@ public class FrameGestioneRiferimento extends JFrame {
                                 c.aggiungiAlCatalogo(riferimento.getCodice(), cat.getCodice());
                                 JOptionPane.showMessageDialog(mainPanel, "Il riferimento è stato assegnato alla categoria selezionata", "Successo!", JOptionPane.INFORMATION_MESSAGE);
                                 riferimento.getCategorie().add(cat);
-                                categoriaDLM.addElement(aggiungiCategoriaComboBox.getSelectedItem().toString());
+                                categoriaDLM.addElement(cat.getNome());
+                                while (cat.getSupercategoria() != null) {
+                                    for (Categoria cat1: c.getCategorie()) {
+                                        if (cat1.getCodice().equals(cat.getSupercategoria())) {
+                                            riferimento.getCategorie().add(cat1);
+                                            categoriaDLM.addElement(cat1.getNome());
+                                            cat = cat1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                for (int i = 0; i < model.getRowCount(); i++) {
+                                    if (model.getValueAt(i, 0).equals(riferimento.getTitolo())) {
+                                        model.setValueAt(riferimento.getCategorie(), i, 7);
+                                        break;
+                                    }
+                                }
                             } catch (SQLException e) {
                                 JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                             }
@@ -204,6 +220,8 @@ public class FrameGestioneRiferimento extends JFrame {
                                 //c.getCategorie().remove(cat);
                                 riferimento.getCategorie().remove(cat);
                                 categoriaDLM.removeElement(categoriaRifList.getSelectedValue().toString());
+                                //TODO: rimuovere tutte le sottocategorie di una categoria
+
                             } catch (SQLException e) {
                                 JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                             }
@@ -1060,5 +1078,11 @@ public class FrameGestioneRiferimento extends JFrame {
         tipoLabel.setVisible(true);
         codiceLabel.setVisible(true);
         codiceTextField.setVisible(true);
+    }
+
+    public void hideTabs() {
+        cateogoriaTabbedPane.remove(3);
+        cateogoriaTabbedPane.remove(2);
+        cateogoriaTabbedPane.remove(1);
     }
 }

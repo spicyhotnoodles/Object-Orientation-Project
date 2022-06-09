@@ -218,8 +218,10 @@ public class Controller {
     public void eliminaCategoria(String id) throws SQLException {
         categoriaDAO.eliminaCategoria(id);
         for (Categoria cat: categorie)
-            if (cat.getCodice().equals(id))
+            if (cat.getCodice().equals(id)) {
                 categorie.remove(cat);
+                break;
+            }
     }
 
     public void creaTag(String tag) throws SQLException {
@@ -240,6 +242,7 @@ public class Controller {
 
     public void mostraCreazioneRiferimento(DefaultTableModel model) {
         FrameGestioneRiferimento finestraRiferimento = new FrameGestioneRiferimento("Crea", this);
+        finestraRiferimento.hideTabs();
         finestraRiferimento.setVisible(true);
         finestraRiferimento.creaNuovoRiferimento(model);
     }

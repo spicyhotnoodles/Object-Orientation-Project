@@ -179,7 +179,7 @@ create table categoria (
 create table catalogo (
     catalogo_id serial primary key,
     riferimento_id int,
-    categoria_id int unique,
+    categoria_id int, -- unique
     -- Vincoli interrelazionali
     constraint riferimento foreign key (riferimento_id) references Riferimento(riferimento_id) on delete cascade,
     constraint categoria foreign key (categoria_id) references Categoria(categoria_id) on delete cascade

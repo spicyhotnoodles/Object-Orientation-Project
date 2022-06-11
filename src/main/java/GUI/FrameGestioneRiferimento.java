@@ -186,8 +186,10 @@ public class FrameGestioneRiferimento extends JFrame {
                                 while (cat.getSupercategoria() != null) {
                                     for (Categoria cat1: c.getCategorie()) {
                                         if (cat1.getCodice().equals(cat.getSupercategoria())) {
-                                            riferimento.getCategorie().add(cat1);
-                                            categoriaDLM.addElement(cat1.getNome());
+                                            if (!categoriaDLM.contains(cat1.getNome())) {
+                                                riferimento.getCategorie().add(cat1);
+                                                categoriaDLM.addElement(cat1.getNome());
+                                            }
                                             cat = cat1;
                                             break;
                                         }
@@ -202,6 +204,7 @@ public class FrameGestioneRiferimento extends JFrame {
                             } catch (SQLException e) {
                                 JOptionPane.showMessageDialog(mainPanel, e, "Errore!", JOptionPane.ERROR_MESSAGE);
                             }
+                            break;
                         }
                     }
                 else

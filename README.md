@@ -193,18 +193,6 @@ create table catalogo (
 
 ![ClassDiagramJava](Pictures/ClassDiagramProgettoOO.jpg)
 
-<body>
-<h2>Prototype</h1>
-<div class="outer-grid">
-<div class="inner-grid">
-<img src=Pictures/MainFrame.png/>
-<figcaption>Main frame of the application</figcaption>
-<img src=Pictures/CreaFrame.png/>
-<figcaption>Creation frame</figcaption>
-<img src=Pictures/GestisciFrame1.png/>
-<figcaption>Modification frame 1</figcaption>
-<img src=Pictures/GestisciFrame2.png/>
-<figcaption>Modification frame 2</figcaption>
-</div>
-</body>
-</html>
+### Prototype
+
+<img src="https://user-images.githubusercontent.com/46612473/236671896-5a930d16-997f-4055-ad9b-611f64d27a2b.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/46612473/236671898-59648a4e-bd27-4b90-9b02-96b071bab48e.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/46612473/236671901-e26f3824-78fc-4a06-ba18-7d63b548eb13.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/46612473/236671902-7c13139d-5360-41e0-95ff-a1eb633ebdc6.png" width="45%"></img>

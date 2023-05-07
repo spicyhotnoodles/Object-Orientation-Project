@@ -191,4 +191,20 @@ create table catalogo (
 
 ### Class Diagram
 
-![ClassDiagramJava](Pictures/class-diagram-java.png)
+![ClassDiagramJava](Pictures/ClassDiagramProgettoOO.jpg)
+
+<body>
+<h2>Prototype</h1>
+<div class="outer-grid">
+<div class="inner-grid">
+<img src=Pictures/MainFrame.png/>
+<figcaption>Main frame of the application</figcaption>
+<img src=Pictures/CreaFrame.png/>
+<figcaption>Creation frame</figcaption>
+<img src=Pictures/GestisciFrame1.png/>
+<figcaption>Modification frame 1</figcaption>
+<img src=Pictures/GestisciFrame2.png/>
+<figcaption>Modification frame 2</figcaption>
+</div>
+</body>
+</html>
